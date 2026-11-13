@@ -20,7 +20,7 @@ def test_db_url() -> str:
     """URL тестовой БД (PostgreSQL). По умолчанию локальная тестовая БД."""
     return os.getenv(
         "TEST_DATABASE_URL",
-        "postgresql+asyncpg://olenevod:olenevod_dev@localhost:5432/olenevod_test",
+        "postgresql+asyncpg://postgres:postgres@localhost:5432/olenevod_test",
     )
 
 
