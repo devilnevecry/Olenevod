@@ -1,4 +1,4 @@
-"""ORM-модели базы данных Olenevod (каталог и остатки)."""
+"""ORM-модели базы данных Olenevod (каталог, остатки, заказы)."""
 
 from olenevod.infrastructure.db import Base
 from olenevod.infrastructure.models.catalog import (
@@ -21,6 +21,7 @@ from olenevod.infrastructure.models.inventory import (
     StockTransferItem,
     Warehouse,
 )
+from olenevod.infrastructure.models.orders import Order, OrderItem
 
 __all__ = [
     "Base",
@@ -40,4 +41,6 @@ __all__ = [
     "StockTransfer",
     "StockTransferItem",
     "Warehouse",
+    "Order",
+    "OrderItem",
 ]
