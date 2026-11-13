@@ -1,0 +1,62 @@
+/* app/globals.css — базовые стили витрины Olenevod
+ *
+ * 1. Tailwind CSS 4 (токены дизайн-системы из tailwind.config.js).
+ * 2. CSS-переменные токенов из packages/design-tokens (генерируются из tokens.json).
+ * 3. Компонентные стили @olenevod/ui (безголые примитивы на токенах).
+ * Готовые UI-киты не используются.
+ */
+@import "tailwindcss";
+@import "../../../packages/design-tokens/css/tokens.css";
+@import "@olenevod/ui/src/olenevod.css";
+
+html {
+  background-color: var(--ol-color-ink-900);
+  color: var(--ol-color-paper-100);
+}
+
+body {
+  background-color: var(--ol-color-ink-900);
+  color: var(--ol-color-paper-100);
+  font-family: var(--ol-font-family-text);
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+a {
+  color: var(--ol-color-ember-300);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  color: var(--ol-color-paper-100);
+}
+
+[data-font="text"] { font-family: var(--ol-font-family-text); }
+[data-font="display"] { font-family: var(--ol-font-family-display); }
+[data-font="mono"] { font-family: var(--ol-font-family-mono); }
+
+/* Бумажное зерно на теле (DESIGN_SYSTEM §2.4) — отключается data-grain="off" */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  opacity: 0.06;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='256' height='256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+body[data-grain="off"]::before { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ol-btn { transition: none; }
+  .ol-ticker:not([data-paused]) .ol-ticker-track { animation: none; }
+}
+
+/* A5 — hover карточки товара */
+.ol-card-img { transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1); }
+.ol-card:hover { background-color: var(--ol-color-ink-700); }
+.ol-card:hover .ol-card-img { transform: scale(1.03); }
