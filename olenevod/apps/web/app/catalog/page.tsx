@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Reveal } from "@olenevod/motion"
 import {
   Button,
@@ -9,10 +9,12 @@ import {
   EmptyState,
   Skeleton,
   Ticker,
+  Toast,
 } from "@olenevod/ui"
 import { catalogApi, type City, type Category, type ProductItem } from "@/lib/api"
-import { CitySelector } from "@/components/header"
+import { CitySelector, Header } from "@/components/header"
 import { useRouter } from "next/navigation"
+import { useCart } from "@/components/cart-provider"
 
 type CatalogState = {
   cities: City[]
@@ -33,6 +35,32 @@ export default function CatalogPage({
   }>
 }>) {
   const router = useRouter()
+  const cart = useCart()
+  const [addedId, setAddedId] = useState<string | null>(null)
+  const [toast, setToast] = useState<{ message: string; visible: boolean }>({
+    message: "",
+    visible: false,
+  })
+
+  const showToast = useCallback((message: string) => {
+    setToast({ message, visible: true })
+    setTimeout(() => setToast((t) => ({ ...t, visible: false })), 3000)
+  }, [])
+
+  const onAdd = useCallback(
+    (product: ProductItem) => {
+      cart.add({
+        product_variant_id: product.variant_id,
+        name: product.name,
+        price: product.price_kop / 100,
+        qty: 1,
+      })
+      setAddedId(product.id)
+      showToast(`Добавлено: ${product.name}`)
+      setTimeout(() => setAddedId(null), 900)
+    },
+    [cart, showToast],
+  )
   const [state, setState] = useState<CatalogState>({
     cities: [],
     categories: [],
@@ -104,6 +132,17 @@ export default function CatalogPage({
     router.push(`/catalog?${q.toString()}`)
   }
 
+  const setCity = (city_id: string) => {
+    const q = new URLSearchParams()
+    q.set("city_id", city_id)
+    q.set("category_id", params.category_id || "")
+    q.set("page", "1")
+    if (params.search) {
+      q.set("search", params.search)
+    }
+    router.push(`/catalog?${q.toString()}`)
+  }
+
   const { cities, categories, items, loading, error } = state
   const city = cities.find((c) => c.id === params.city_id) ?? cities[0]
   if (!city) return null
@@ -127,6 +166,11 @@ export default function CatalogPage({
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Header
+        cities={cities.map((c) => ({ id: c.id, name: c.name }))}
+        selectedId={city.id}
+        onSelect={() => {}}
+      />
       <section className="border-b border-line bg-ink-900 py-4">
         <div className="mx-auto max-w-[1440px] px-4">
           <div className="flex items-baseline gap-4 mb-4">
@@ -138,7 +182,7 @@ export default function CatalogPage({
           <CitySelector
             cities={cities.map((c) => ({ id: c.id, name: c.name }))}
             selectedId={city.id}
-            onSelect={() => {}}
+            onSelect={setCity}
           />
         </div>
       </section>
@@ -179,7 +223,7 @@ export default function CatalogPage({
                   price={product.price_kop / 100}
                   oldPrice={product.old_price_kop ? product.old_price_kop / 100 : undefined}
                   inStock={product.available_qty > 0}
-                  onAdd={() => {}}
+                  onAdd={() => onAdd(product)}
                 />
               ))
             ) : (
@@ -215,6 +259,7 @@ export default function CatalogPage({
       <section className="bg-ink-950 py-3">
         <Ticker kind="promo" items={["ПОПУЛЯРНОЕ!"]} speedSeconds={35} />
       </section>
+      <Toast message={toast.message} visible={toast.visible} onDismiss={() => setToast((t) => ({ ...t, visible: false }))} />
     </div>
   )
 }

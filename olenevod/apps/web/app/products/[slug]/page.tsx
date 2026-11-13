@@ -1,10 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Reveal, NumberRoll } from "@olenevod/motion"
-import { Button, Badge, Skeleton } from "@olenevod/ui"
+import { Button, Badge, Skeleton, Toast } from "@olenevod/ui"
 import { catalogApi, formatPrice, type City, type ProductCard as ProductCardDto } from "@/lib/api"
-import { CitySelector } from "@/components/header"
+import { CitySelector, Header } from "@/components/header"
+import { useCart } from "@/components/cart-provider"
 
 type ProductState = {
   cities: City[]
@@ -21,6 +22,18 @@ export default function ProductPage({
   params: Promise<{ slug: string }>
   searchParams: Promise<{ city_id?: string }>
 }>) {
+  const cart = useCart()
+  const [addedId, setAddedId] = useState<string | null>(null)
+  const [toast, setToast] = useState<{ message: string; visible: boolean }>({
+    message: "",
+    visible: false,
+  })
+
+  const showToast = useCallback((message: string) => {
+    setToast({ message, visible: true })
+    setTimeout(() => setToast((t) => ({ ...t, visible: false })), 3000)
+  }, [])
+
   const [state, setState] = useState<ProductState>({
     cities: [],
     card: null,
@@ -84,8 +97,25 @@ export default function ProductPage({
   )
   const cityStock = mainVariant.available_by_city.find((s) => s.city_id === city.id)
 
+  const onAdd = useCallback(() => {
+    cart.add({
+      product_variant_id: mainVariant.id,
+      name: card.name,
+      price: mainVariant.price_kop / 100,
+      qty: 1,
+    })
+    setAddedId(mainVariant.id)
+    showToast(`Добавлено: ${card.name}`)
+    setTimeout(() => setAddedId(null), 900)
+  }, [cart, showToast, mainVariant, card])
+
   return (
     <div className="min-h-screen flex flex-col">
+      <Header
+        cities={cities.map((c) => ({ id: c.id, name: c.name }))}
+        selectedId={city.id}
+        onSelect={() => {}}
+      />
       <section className="border-b border-line bg-ink-900 py-4">
         <div className="mx-auto max-w-[1440px] px-4">
           <div className="flex items-baseline gap-4 mb-2">
@@ -131,7 +161,10 @@ export default function ProductPage({
                   {mainVariant.unit_type.toUpperCase()}
                 </p>
                 <div className="flex items-baseline gap-3">
-                  <NumberRoll value={mainVariant.price_kop / 100} className="font-text font-semibold text-[28px] tabular-nums text-paper-100" />
+                  <NumberRoll
+                    value={mainVariant.price_kop / 100}
+                    className="font-text font-semibold text-[28px] tabular-nums text-paper-100"
+                  />
                   <span className="text-paper-500">₽</span>
                 </div>
                 {mainVariant.old_price_kop && (
@@ -158,7 +191,7 @@ export default function ProductPage({
               <Button
                 variant="primary"
                 disabled={!inStock}
-                onClick={() => {}}
+                onClick={onAdd}
                 className="w-full"
               >
                 {inStock ? "В корзину" : "Сообщить о поступлении"}
@@ -172,6 +205,7 @@ export default function ProductPage({
           </div>
         </div>
       </section>
+      <Toast message={toast.message} visible={toast.visible} onDismiss={() => setToast((t) => ({ ...t, visible: false }))} />
     </div>
   )
 }

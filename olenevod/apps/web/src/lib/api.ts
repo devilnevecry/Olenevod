@@ -72,9 +72,17 @@ interface ListProductsParams {
   search?: string
 }
 
+interface RequestOptions {
+  method?: string
+  body?: unknown
+}
+
+type RequestParamValue = string | number | null | undefined | (string | number)[]
+
 async function request<T>(
   path: string,
-  params?: Record<string, string | number | null | undefined>
+  params?: Record<string, RequestParamValue>,
+  options: RequestOptions = {},
 ): Promise<T> {
   const fullPath = API_URL + path
   let lastError: unknown = null
@@ -83,12 +91,20 @@ async function request<T>(
       const url = new URL(fullPath, typeof window !== "undefined" ? window.location.origin : "http://localhost")
       if (params) {
         for (const [key, value] of Object.entries(params)) {
-          if (value !== undefined && value !== null && value !== "") {
-            url.searchParams.append(key, String(value))
+          const values = Array.isArray(value) ? value : [value]
+          for (const v of values) {
+            if (v !== undefined && v !== null && v !== "") {
+              url.searchParams.append(key, String(v))
+            }
           }
         }
       }
-      const response = await fetch(url.toString(), { cache: "no-store" })
+      const init: RequestInit = { cache: "no-store", method: options.method ?? "GET" }
+      if (options.body !== undefined) {
+        init.headers = { "Content-Type": "application/json" }
+        init.body = JSON.stringify(options.body)
+      }
+      const response = await fetch(url.toString(), init)
       if (!response.ok) {
         throw new Error(`API ${path} responded ${response.status}`)
       }
@@ -125,3 +141,111 @@ export const formatPrice = (kop: number): string => {
     maximumFractionDigits: 2,
   }) + " ₽"
 }
+
+// ---------- Заказы (этап 5) ----------
+
+export interface OrderItem {
+  id: string
+  product_variant_id: string
+  qty: number
+  price: number
+}
+
+export interface Order {
+  id: string
+  city_id: string
+  customer_name: string
+  customer_phone: string
+  status: string
+  total_amount: number
+  items: OrderItem[]
+}
+
+export interface OrderItemIn {
+  product_variant_id: string
+  qty: number
+}
+
+export interface OrderIn {
+  city_id: string
+  customer_name: string
+  customer_phone: string
+  items: OrderItemIn[]
+}
+
+export const ordersApi = {
+  create: (data: OrderIn) => request<Order>("/orders", undefined, { method: "POST", body: data }),
+  get: (order_id: string) => request<Order>(`/orders/${order_id}`),
+}
+
+// ---------- Доставка (этап 9) ----------
+
+export interface DeliveryQuote {
+  city_id: string
+  zone: string
+  fee: number
+  free_delivery: boolean
+  estimated_days: number | null
+}
+
+export const deliveryApi = {
+  quote: (city_id: string, variant_ids: string[], total_amount: number) =>
+    request<DeliveryQuote>("/delivery/quote", {
+      city_id,
+      items: variant_ids,
+      total_amount,
+    }),
+}
+
+// ---------- Платежи (этап 6) ----------
+
+export interface Payment {
+  id: string
+  order_id: string
+  provider: string
+  amount: number
+  status: string
+  external_id: string | null
+  created_at: string
+}
+
+export const paymentsApi = {
+  status: (order_id: string) => request<Payment>(`/payments/${order_id}/status`),
+  webhook: (provider: string, payload: unknown) =>
+    request<{ order_id: string; status: string }>(`/payments/webhook/${provider}`, undefined, {
+      method: "POST",
+      body: payload,
+    }),
+}
+
+// ---------- Аутентификация (этап 10) ----------
+
+export interface RegisterIn {
+  email: string
+  name: string
+  password: string
+}
+
+export interface RegisterOut {
+  user_id: string
+  email: string
+  is_verified: boolean
+  message: string
+}
+
+export interface LoginIn {
+  email: string
+  password: string
+}
+
+export interface LoginOut {
+  access_token: string
+  token_type: string
+  user_id: string
+}
+
+export const authApi = {
+  register: (data: RegisterIn) => request<RegisterOut>("/auth/register", undefined, { method: "POST", body: data }),
+  login: (data: LoginIn) => request<LoginOut>("/auth/login", undefined, { method: "POST", body: data }),
+}
+

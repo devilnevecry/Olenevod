@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Reveal } from "@olenevod/motion"
 import {
   Button,
@@ -9,9 +9,11 @@ import {
   ProductCard,
   Skeleton,
   Ticker,
+  Toast,
 } from "@olenevod/ui"
 import { catalogApi, formatPrice, type City, type Category, type ProductItem } from "@/lib/api"
-import { CitySelector } from "@/components/header"
+import { CitySelector, Header } from "@/components/header"
+import { useCart } from "@/components/cart-provider"
 
 const MOSCOW_SLUG = "moscow"
 
@@ -24,6 +26,32 @@ type HomeState = {
 }
 
 export default function HomePage() {
+  const cart = useCart()
+  const [addedId, setAddedId] = useState<string | null>(null)
+  const [toast, setToast] = useState<{ message: string; visible: boolean }>({
+    message: "",
+    visible: false,
+  })
+
+  const showToast = useCallback((message: string) => {
+    setToast({ message, visible: true })
+    setTimeout(() => setToast((t) => ({ ...t, visible: false })), 3000)
+  }, [])
+
+  const onAdd = useCallback(
+    (product: ProductItem) => {
+      cart.add({
+        product_variant_id: product.variant_id,
+        name: product.name,
+        price: product.price_kop / 100,
+        qty: 1,
+      })
+      setAddedId(product.id)
+      showToast(`Добавлено: ${product.name}`)
+      setTimeout(() => setAddedId(null), 900)
+    },
+    [cart, showToast],
+  )
   const [state, setState] = useState<HomeState>({
     cities: [],
     categories: [],
@@ -82,6 +110,11 @@ export default function HomePage() {
 
   return (
     <div className="relative min-h-screen flex flex-col" data-grain="off">
+      <Header
+        cities={cities.map((c) => ({ id: c.id, name: c.name }))}
+        selectedId={moscow ? moscow.id : null}
+        onSelect={() => {}}
+      />
       <section className="relative h-[min(100svh,720px)] flex flex-col justify-between border-b border-line bg-ink-900">
         <Reveal once={true} className="pt-6 pb-4">
           <div className="flex flex-col lg:flex-row gap-6 items-end">
@@ -180,7 +213,7 @@ export default function HomePage() {
                   price={product.price_kop / 100}
                   oldPrice={product.old_price_kop ? product.old_price_kop / 100 : undefined}
                   inStock={product.available_qty > 0}
-                  onAdd={() => {}}
+                  onAdd={() => onAdd(product)}
                 />
               ))
             ) : (
@@ -189,6 +222,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      <Toast message={toast.message} visible={toast.visible} onDismiss={() => setToast((t) => ({ ...t, visible: false }))} />
     </div>
   )
 }

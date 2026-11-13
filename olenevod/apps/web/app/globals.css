@@ -60,3 +60,50 @@ body[data-grain="off"]::before { display: none; }
 .ol-card-img { transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1); }
 .ol-card:hover { background-color: var(--ol-color-ink-700); }
 .ol-card:hover .ol-card-img { transform: scale(1.03); }
+
+/* A19 — форма: встряска поля при ошибке */
+@keyframes ol-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-6px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+.ol-field[data-state="error"] > .ol-input,
+.ol-field[data-state="error"] > .ol-select {
+  animation: ol-shake 240ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ol-field[data-state="error"] > .ol-input,
+  .ol-field[data-state="error"] > .ol-select {
+    animation: none;
+  }
+}
+
+/* A22 — 404: след оленя проступает */
+.ol-deer-track {
+  animation: ol-deer-track 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes ol-deer-track {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ol-deer-track {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
