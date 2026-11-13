@@ -21,3 +21,4 @@ ignore = ["E501", "B008"]
 python_version = "3.12"
 strict = true
 plugins = ["pydantic.mypy"]
+mypy_path = ["../api"]
