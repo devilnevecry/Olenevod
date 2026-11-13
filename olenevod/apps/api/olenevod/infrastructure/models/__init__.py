@@ -10,6 +10,7 @@ from olenevod.infrastructure.models.catalog import (
     ProductMedia,
     ProductVariant,
 )
+from olenevod.infrastructure.models.delivery import DeliveryTariff, DeliveryZone
 from olenevod.infrastructure.models.inventory import (
     AuditLog,
     City,
@@ -29,6 +30,8 @@ from olenevod.infrastructure.models.payments import Payment
 __all__ = [
     "Base",
     "Category",
+    "DeliveryTariff",
+    "DeliveryZone",
     "File",
     "Nutrition",
     "Product",
