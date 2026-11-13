@@ -1,0 +1,35 @@
+# Caddyfile — обратный прокси Olenevod (этап 1 каркаса).
+# В продакшене замените localhost на реальные домены и добавьте TLS.
+
+{
+    admin off
+    log {
+        output stdout
+        format console
+    }
+}
+
+# Health API — доступен напрямую для проверок балансировщика
+api.olenevod.local {
+    reverse_proxy api:8000
+}
+
+# Витрина (Next.js)
+web.olenevod.local {
+    reverse_proxy web:3000
+}
+
+# Админка (Vite)
+admin.olenevod.local {
+    reverse_proxy admin:5173
+}
+
+# Локальная разработка — все на localhost
+localhost {
+    reverse_proxy /api/* api:8000
+    reverse_proxy /healthz api:8000
+    reverse_proxy /readyz api:8000
+    reverse_proxy web:3000
+    encode gzip zstd
+    file_server
+}

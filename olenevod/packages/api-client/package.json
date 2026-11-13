@@ -1,0 +1,15 @@
+{
+  "name": "@olenevod/api-client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Типы и клиент API Olenevod, генерируются из OpenAPI",
+  "main": "src/index.ts",
+  "scripts": {
+    "generate": "openapi-typescript ../docs/openapi.json -o src/types.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "openapi-typescript": "7.x",
+    "typescript": "5.6.x"
+  }
+}

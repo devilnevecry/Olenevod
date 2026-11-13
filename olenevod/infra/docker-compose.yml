@@ -1,0 +1,176 @@
+# Olenevod — Docker Compose (этап 1 каркаса).
+#
+# Профили:
+#   dev   — горячая перезагрузка api/web/admin + боты, воркеры, caddy
+#   test  — изолированный стек для CI (db, redis, api в тестовом режиме)
+#   prod  — боевой стек (caddy + web + api + bots + worker)
+#
+# Сервисы db и redis не имеют профиля — стартуют всегда.
+#
+# Использование:
+#   docker compose --profile dev up -d
+#   docker compose --profile test up -d   (CI, см. Makefile: test)
+#   docker compose --profile prod up -d
+
+services:
+  ########################################################################
+  # Базовые сервисы (всегда)
+  ########################################################################
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-olenevod}
+      POSTGRES_USER: ${POSTGRES_USER:-olenevod}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-olenevod_dev}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - olenevod_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-olenevod} -d ${POSTGRES_DB:-olenevod}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: redis-server --save "" --appendonly no
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  ########################################################################
+  # API (FastAPI) — один образ для api / bots / worker
+  ########################################################################
+  api:
+    build:
+      context: ../olenevod/apps/api
+      dockerfile: Dockerfile
+    profiles:
+      - dev
+      - prod
+      - test
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://olenevod:olenevod_dev@db:5432/olenevod}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-change-me-in-production}
+      APP_MODE: ${APP_MODE:-demo}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "${API_PORT:-8000}:8000"
+    command: uvicorn olenevod.main:app --host 0.0.0.0 --port 8000 --reload
+    restart: unless-stopped
+
+  ########################################################################
+  # Витрина (Next.js 15)
+  ########################################################################
+  web:
+    build:
+      context: ../olenevod/apps/web
+      dockerfile: Dockerfile
+    profiles:
+      - dev
+      - prod
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:${API_PORT:-8000}
+      APP_MODE: ${APP_MODE:-demo}
+    depends_on:
+      - api
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    restart: unless-stopped
+
+  ########################################################################
+  # Админка (Vite React 19)
+  ########################################################################
+  admin:
+    build:
+      context: ../olenevod/apps/admin
+      dockerfile: Dockerfile
+    profiles:
+      - dev
+      - prod
+    environment:
+      VITE_API_URL: http://localhost:${API_PORT:-8000}
+      APP_MODE: ${APP_MODE:-demo}
+    depends_on:
+      - api
+    ports:
+      - "${ADMIN_PORT:-5173}:5173"
+    restart: unless-stopped
+
+  ########################################################################
+  # Боты (Telegram aiogram / VK / MAX — тонкие адаптеры над ядром)
+  ########################################################################
+  bots:
+    build:
+      context: ../olenevod/apps/api
+      dockerfile: Dockerfile
+    profiles:
+      - dev
+      - prod
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://olenevod:olenevod_dev@db:5432/olenevod}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-change-me-in-production}
+      APP_MODE: ${APP_MODE:-demo}
+      BOT_TOKEN_TELEGRAM: ${BOT_TOKEN_TELEGRAM:-TODO_OWNER}
+      BOT_TOKEN_VK: ${BOT_TOKEN_VK:-TODO_OWNER}
+      BOT_TOKEN_MAX: ${BOT_TOKEN_MAX:-TODO_OWNER}
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  ########################################################################
+  # Фоновый воркер (arq — outbox, истечение резервов, рассылки)
+  ########################################################################
+  worker:
+    build:
+      context: ../olenevod/apps/api
+      dockerfile: Dockerfile
+    profiles:
+      - dev
+      - prod
+      - test
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://olenevod:olenevod_dev@db:5432/olenevod}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-change-me-in-production}
+      APP_MODE: ${APP_MODE:-demo}
+    depends_on:
+      redis:
+        condition: service_healthy
+    command: arq olenevod.workers.settings
+    restart: unless-stopped
+
+  ########################################################################
+  # Reverse proxy Caddy (HTTPS, статика, прокси на web/admin/api)
+  ########################################################################
+  caddy:
+    image: caddy:2
+    profiles:
+      - dev
+      - prod
+    ports:
+      - "${CADDY_HTTP_PORT:-80}:80"
+      - "${CADDY_HTTPS_PORT:-443}:443"
+    volumes:
+      - ../olenevod/infra/Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - web
+      - admin
+      - api
+    restart: unless-stopped
+
+volumes:
+  olenevod_db_data:

@@ -1,0 +1,35 @@
+# Python
+.venv/
+venv/
+.env
+__pycache__/
+*.py[cdo]
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.tox/
+.coverage
+htmlcov/
+*.egg-info/
+*.egg
+
+# Node
+node_modules/
+.pnp/
+.pnp.js
+.next/
+dist/
+build/
+*.lock
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Локальные сгенерированные файлы (не коммитить)
+.env
+openapi.json
