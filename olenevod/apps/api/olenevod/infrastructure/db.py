@@ -1,10 +1,18 @@
 """Асинхронное подключение к PostgreSQL (SQLAlchemy 2)."""
 
+import uuid
 from collections.abc import Awaitable, Callable
+from datetime import datetime
+from typing import Any
 
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
+from sqlalchemy.orm import DeclarativeBase, Mapped
 
 from olenevod.settings import settings
 
@@ -14,11 +22,21 @@ engine: AsyncEngine = create_async_engine(
     pool_pre_ping=True,
 )
 
-async_session = sessionmaker(
+async_session: async_sessionmaker[AsyncSession] = async_sessionmaker(
     engine,
-    class_=AsyncSession,
     expire_on_commit=False,
 )
+
+
+class Base(DeclarativeBase):
+    """Декларативная база всех ORM-моделей (метаданные для Alembic)."""
+
+    pass
+
+
+type IdPk = Mapped[uuid.UUID]
+type Ts = Mapped[datetime]
+type JsonDict = dict[str, Any]
 
 
 async def check_db() -> tuple[bool, str | None]:
