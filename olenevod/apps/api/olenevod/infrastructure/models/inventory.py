@@ -250,6 +250,72 @@ class StockTransferItem(Base):
     )
 
 
+class InventoryReservation(Base):
+    """Резерв остатка под заказ (городской уровень, привязка к складу фиксируется при создании)."""
+
+    __tablename__ = "inventory_reservations"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    order_id: Mapped[uuid.UUID] = mapped_column(nullable=False, index=True)
+    warehouse_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("warehouses.id", ondelete="RESTRICT"), nullable=False, index=True
+    )
+    variant_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("product_variants.id", ondelete="RESTRICT"), nullable=False, index=True
+    )
+    city_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("cities.id", ondelete="RESTRICT"), nullable=False, index=True
+    )
+    qty: Mapped[int] = mapped_column(Integer, nullable=False)
+    status: Mapped[str] = mapped_column(
+        Enum(
+            "active",
+            "committed",
+            "released",
+            "expired",
+            name="inventory_reservation_status",
+        ),
+        nullable=False,
+        default="active",
+    )
+    expires_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True, index=True
+    )
+    idempotency_key: Mapped[str | None] = mapped_column(
+        String(200), nullable=True, index=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    __table_args__ = (
+        CheckConstraint("qty > 0", name="ck_inventory_reservations_qty_positive"),
+    )
+
+
+class Outbox(Base):
+    """Событийная очередь (outbox) для событий изменения остатков."""
+
+    __tablename__ = "outbox"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    aggregate_type: Mapped[str] = mapped_column(
+        String(100), nullable=False, index=True
+    )
+    aggregate_id: Mapped[uuid.UUID] = mapped_column(nullable=False, index=True)
+    event_type: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    payload: Mapped[JsonDict | None] = mapped_column(postgresql.JSONB, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+        index=True,
+    )
+    processed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
+
 class AuditLog(Base):
     """Аудит изменений (append-only: запрет UPDATE/DELETE)."""
 
