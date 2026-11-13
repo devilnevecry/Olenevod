@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" aria-label="Печать Оленевод">
+  <desc>Знак внутри печати: текст по кругу «ОЛЕНЕВОД • ВОРКУТА •», в центре эмблема, глиф звезды над лбом.</desc>
+  <!-- Внешняя и внутренняя окружности печати -->
+  <circle cx="60" cy="60" r="56" fill="none" stroke="#B33A20" stroke-width="7" stroke-linecap="butt"/>
+  <circle cx="60" cy="60" r="44" fill="none" stroke="#B33A20" stroke-width="1.5" stroke-linecap="butt"/>
+  <!-- Текст по нижней дуге印ти -->
+  <path id="seal-arc" fill="none" d="M 31 16 A 56 56 0 1 1 89 16"/>
+  <text text-anchor="middle" startOffset="50%" method="align" spacing="auto" letter-spacing="3" font-family="sans-serif" font-weight="700" font-size="13" fill="#B33A20">
+    <textPath href="#seal-arc">ОЛЕНЕВОД • ВОРКУТА •</textPath>
+  </text>
+  <!-- Эмблема в центре (масштаб 0.42) -->
+  <g transform="translate(60 60) scale(0.42)">
+    <path fill="none" stroke="#B33A20" stroke-width="6" stroke-linecap="butt" d="
+      M 82.8 8.8
+      A 56 56 0 1 1 37.2 8.8
+      L 39.7 14.3
+      A 50 50 0 1 0 80.3 14.3
+      Z
+    "/>
+    <path fill="#B33A20" fill-rule="evenodd" d="
+      M 60 88
+      L 43 82
+      L 36 60
+      L 46 46
+      L 52 34
+      L 60 30
+      L 68 34
+      L 74 46
+      L 84 60
+      L 77 82
+      L 62 78
+      L 60 81
+      L 58 78
+      Z
+      M 51 49.5 L 53 49 L 53 51 L 51 51 Z
+      M 67 49.5 L 69 49 L 69 51 L 67 51 Z
+      M 54 67.5 L 56 67.5 L 56 69.5 L 54 69.5 Z
+      M 64 67.5 L 66 67.5 L 66 69.5 L 64 69.5 Z
+    "/>
+    <path fill="none" stroke="#B33A20" stroke-width="4" stroke-linecap="round" d="
+      M 54 32 L 47 20
+      M 47 20 L 45.5 5.9
+      M 48 23 L 43 13
+      M 49 26 L 46 18
+      M 66 32 L 73 20
+      M 73 20 L 74.5 5.9
+      M 72 23 L 77 13
+      M 71 26 L 74 18
+    "/>
+  </g>
+  <!-- Глиф «Полярной звезды» над лбом (только в печати) -->
+  <path fill="#B33A20" d="M 60 18.6 L 61.2 21.6 L 64.5 24 L 61.2 26.4 L 60 29.4 L 58.8 26.4 L 55.5 24 L 58.8 21.6 Z"/>
+</svg>

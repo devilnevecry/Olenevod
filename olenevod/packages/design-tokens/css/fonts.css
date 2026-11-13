@@ -1,0 +1,48 @@
+/* fonts.css — самодешрифты Olenevod (DESIGN_SYSTEM §3)
+ *
+ * Подключение: self-host, только подмножества cyrillic + latin,
+ * font-display: swap, Display и Text 400/600 предзагружаются (preload)
+ * в `<head>` страниц.
+ *
+ * Источники файлов: Google Fonts исходники (github.com/google/fonts),
+ * скопированы в olenevod/packages/design-tokens/fonts/ и brand/fonts/.
+ * Никаких запросов к Google Fonts во время работы (DECISIONS §1).
+ */
+
+/* Oswald — дисплей, сверхплотный, 600–700, UPPERCASE */
+@font-face {
+  font-family: "Oswald";
+  src: url("./fonts/Oswald-Variable.ttf") format("truetype");
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+000-0FF, U+0400-04FF, U+20BD, U+2116;
+}
+
+/* Golos Text — текст, 400/500/600 */
+@font-face {
+  font-family: "Golos Text";
+  src: url("./fonts/GolosText-Variable.ttf") format("truetype");
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+000-0FF, U+0400-04FF, U+20BD, U+2116;
+}
+
+/* IBM Plex Mono — моно, 400/500, UPPERCASE, трекинг +0.06em */
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("./fonts/IBMPlexMono-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+000-0FF, U+0400-04FF, U+20BD, U+2116;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("./fonts/IBMPlexMono-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+000-0FF, U+0400-04FF, U+20BD, U+2116;
+}

@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Olenevod — логотип и комплект бренда</title>
+<link rel="preload" as="font" href="./fonts/Oswald-Variable.ttf" type="font/ttf" crossorigin>
+<link rel="preload" as="font" href="./fonts/GolosText-Variable.ttf" type="font/ttf" crossorigin>
+<style>
+  /* Самодешрифты, self-host (DESIGN_SYSTEM §3, DECISIONS §1) */
+  @font-face {
+    font-family: "Oswald"; src: url("./fonts/Oswald-Variable.ttf") format("truetype");
+    font-weight: 200 700; font-display: swap;
+    unicode-range: U+000-0FF, U+0400-04FF, U+20BD, U+2116;
+  }
+  @font-face {
+    font-family: "Golos Text"; src: url("./fonts/GolosText-Variable.ttf") format("truetype");
+    font-weight: 400 900; font-display: swap;
+    unicode-range: U+000-0FF, U+0400-04FF, U+20BD, U+2116;
+  }
+  @font-face {
+    font-family: "IBM Plex Mono"; src: url("./fonts/IBMPlexMono-Regular.ttf") format("truetype");
+    font-weight: 400; font-display: swap;
+    unicode-range: U+000-0FF, U+0400-04FF, U+20BD, U+2116;
+  }
+  @font-face {
+    font-family: "IBM Plex Mono"; src: url("./fonts/IBMPlexMono-Medium.ttf") format("truetype");
+    font-weight: 500; font-display: swap;
+    unicode-range: U+000-0FF, U+0400-04FF, U+20BD, U+2116;
+  }
+  :root{
+    --ink-900:#14100d; --ink-850:#1a1511; --paper-100:#f2eadb; --paper-ink:#15110e;
+    --ember-600:#b33a20; --ember-500:#d4492a; --brass-400:#c8a468; --line:#3a3027;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{
+    background:var(--ink-900); color:var(--paper-100);
+    font-family:"Golos Text",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    font-size:16px; line-height:1.6; padding:32px 16px;
+  }
+  header{padding:0 0 40px 0; border-bottom:1px solid var(--line)}
+  h1{font-family:"Oswald",system-ui;font-weight:700; font-size:clamp(32px,8vw,64px);
+     letter-spacing:-0.01em; text-transform:uppercase; color:var(--paper-100); margin-bottom:8px;}
+  p.lead{color:var(--paper-300); font-size:15px; max-width:420px;}
+  .note{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--paper-500);letter-spacing:0.06em;text-transform:uppercase;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;margin-top:40px;}
+  .card{background:var(--ink-850);border:1px solid var(--line);border-radius:2px;padding:20px;}
+  .card h2{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;
+    color:var(--paper-300);margin-bottom:12px;}
+  .dark{background:var(--ink-900)}
+  .light{background:var(--paper-bg);color:var(--paper-ink)}
+  .light .card{background:#fff;border-color:#d9d3c2;color:var(--paper-ink)}
+  .light .card h2{color:#6e6354}
+  .preview{display:flex;align-items:center;justify-content:center;min-height:220px;margin-bottom:14px;}
+  .versions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px;}
+  .chip{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;
+    border:1px solid var(--line);color:var(--paper-300);padding:2px 8px;border-radius:999px;background:transparent}
+  .dark .chip{border-color:var(--line);color:var(--paper-300)}
+  .light .chip{border-color:#bcb2a1;color:#5c5448}
+  .size-note{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--paper-500);margin-top:6px;}
+  .footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--line);font-size:13px;color:var(--paper-300)}
+  .footer a{color:var(--ember-300);text-decoration:none;border-bottom:1px solid var(--ember-300)}
+  .footer a:hover{color:var(--paper-100);border-color:var(--paper-100)}
+  @media (prefers-reduced-motion: reduce){* {animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Olenevod</h1>
+  <p class="lead">Комплект бренда и логотипа «Кольцо-О». Самодостаточные шрифты (Oswald, Golos Text, IBM Plex Mono),
+  подключаются локально — запросов к внешним CDN нет.</p>
+  <p class="note">Olenevod • Воркута • Тундра</p>
+</header>
+
+<main style="max-width:980px;margin:0 auto">
+  <section style="margin-bottom:48px">
+    <h2>Основной знак — эмблема</h2>
+    <div class="grid">
+      <div class="card dark">
+        <h2>Эмблема на тёмном</h2>
+        <div class="preview dark"><img src="logo-on-dark.svg" alt="Эмблема на тёмном фоне" style="max-width:150px;max-height:150px"></div>
+        <p class="size-note">Цвет знака paper-100, звезда ember-500. Основной вариант сайта.</p>
+      </div>
+      <div class="card light">
+        <h2>Эмблема на светлом</h2>
+        <div class="preview light"><img src="logo-on-light.svg" alt="Эмблема на светлом фоне" style="max-width:150px;max-height:150px"></div>
+        <p class="size-note">Цвет знака paper-ink, для секций на paper-bg.</p>
+      </div>
+      <div class="card dark">
+        <h2>Эмблема (базовый цвет)</h2>
+        <div class="preview dark"><img src="logo-emblem.svg" alt="Эмблема, ember-600" style="max-width:150px;max-height:150px"></div>
+        <p class="size-note">Цвет ember-600 #B33A20.</p>
+      </div>
+      <div class="card dark">
+        <h2>Эмблема-печать</h2>
+        <div class="preview dark"><img src="logo-emblem-seal.svg" alt="Знак в печати с текстом по кругу" style="max-width:150px;max-height:150px"></div>
+        <p class="size-note">Текст по кругу «ОЛЕНЕВОД • ВОРКУТА •», глиф звезды над лбом.</p>
+      </div>
+      <div class="card dark">
+        <h2>Монохром: чёрный</h2>
+        <div class="preview dark"><img src="logo-mono-black.svg" alt="Монохром чёрный" style="max-width:150px;max-height:150px"></div>
+        <p class="size-note">Цвет ink-950 #0E0B09. Печать, штамп, тиснение.</p>
+      </div>
+      <div class="card light">
+        <h2>Монохром: белый</h2>
+        <div class="preview light"><img src="logo-mono-white.svg" alt="Монохром белый" style="max-width:150px;max-height:150px"></div>
+        <p class="size-note">Цвет paper-100 #F2EADB.</p>
+      </div>
+      <div class="card light">
+        <h2>Монохром: латунь</h2>
+        <div class="preview light"><img src="logo-mono-brass.svg" alt="Монохром латунь" style="max-width:150px;max-height:150px"></div>
+        <p class="size-note">Цвет brass-400 #C8A468.</p>
+      </div>
+      <div class="card dark">
+        <h2>Иконка</h2>
+        <div class="preview dark"><img src="logo-icon.svg" alt="Иконка без кольца" style="max-width:60px;max-height:60px"></div>
+        <p class="size-note">favicon и мелкие размеры, кольца нет.</p>
+      </div>
+      <div class="card dark">
+        <h2>Блок горизонтальный</h2>
+        <div class="preview dark"><img src="logo-lockup-horizontal.svg" alt="Знак + слово" style="max-width:300px;max-height:100px"></div>
+        <p class="size-note">Знак слева, слово справа — шапка сайта.</p>
+      </div>
+      <div class="card dark">
+        <h2>Блок вертикальный</h2>
+        <div class="preview dark"><img src="logo-lockup-vertical.svg" alt="Знак над словом" style="max-width:110px;max-height:190px"></div>
+        <p class="size-note">Знак сверху, слово снизу — упаковка, обложки.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-bottom:48px">
+    <h2>Слово-знак</h2>
+    <div class="preview" style="justify-content:center"><img src="logo-wordmark.svg" alt="Слово ОЛЕНЕВОД" style="max-width:260px"></div>
+    <p class="size-note">Oswald 700, капс, трекинг +2%. Для производства перевести в контуры.</p>
+  </section>
+
+  <section style="margin-bottom:40px">
+    <h2>Версии файлов</h2>
+    <div class="versions">
+      <span class="chip">logo-emblem.svg</span>
+      <span class="chip">logo-emblem-seal.svg</span>
+      <span class="chip">logo-wordmark.svg</span>
+      <span class="chip">logo-lockup-horizontal.svg</span>
+      <span class="chip">logo-lockup-vertical.svg</span>
+      <span class="chip">logo-icon.svg</span>
+      <span class="chip">logo-mono-black.svg</span>
+      <span class="chip">logo-mono-white.svg</span>
+      <span class="chip">logo-mono-brass.svg</span>
+      <span class="chip">logo-on-dark.svg</span>
+      <span class="chip">logo-on-light.svg</span>
+    </div>
+    <p class="size-note">PNG-производные (аватары 640×640, favicon, og-картинки) собираются скриптом brand/build-brand.mjs.</p>
+  </section>
+
+  <footer class="footer">
+    Olenevod — северный деликатес из тундры. Дизайн-система: packages/design-tokens/tokens.json.
+    <br>Оригинальность знака: brand/logo-originality.md.
+  </footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,124 @@
+/*
+ * ОКНО: этот файл сгенерирован автоматически из tokens.json.
+ * Не править вручную — править tokens.json и пересобирать: npm run build
+ */
+
+:root {
+  /* Цвета (DESIGN_SYSTEM §2) */
+  --ol-color-ink-950: #0E0B09;
+  --ol-color-ink-900: #14100D;
+  --ol-color-ink-850: #1A1511;
+  --ol-color-ink-800: #211B16;
+  --ol-color-ink-700: #2D251E;
+  --ol-color-line: #3A3027;
+  --ol-color-paper-100: #F2EADB;
+  --ol-color-paper-300: #CFC4B0;
+  --ol-color-paper-500: #9A8F7C;
+  --ol-color-ember-300: #EE7D5A;
+  --ol-color-ember-400: #E8603B;
+  --ol-color-ember-500: #D4492A;
+  --ol-color-ember-600: #B33A20;
+  --ol-color-ember-700: #8E2D18;
+  --ol-color-flame-500: #F26B1D;
+  --ol-color-brass-400: #C8A468;
+  --ol-color-brass-600: #8F7340;
+  --ol-color-tundra-700: #1F3A3D;
+  --ol-color-tundra-400: #6FA3B8;
+  --ol-color-meat-600: #6E1F25;
+  --ol-color-success: #5E9E6E;
+  --ol-color-warning: #D9A441;
+  --ol-color-danger: #E0524A;
+  --ol-color-paper-bg: #E9E0CE;
+  --ol-color-paper-ink: #15110E;
+
+  /* Шрифты (DESIGN_SYSTEM §3) */
+  --ol-font-family-display: ["Oswald","system-ui","Segoe UI","Roboto","Arial","sans-serif"];
+  --ol-font-family-text: ["Golos Text","system-ui","Segoe UI","Roboto","Arial","sans-serif"];
+  --ol-font-family-mono: ["IBM Plex Mono","ui-monospace","SFMono-Regular","Menlo","monospace"];
+  --ol-font-size-display-xxl: clamp(72px, 15vw, 256px);
+  --ol-font-size-display-xl: clamp(56px, 10vw, 160px);
+  --ol-font-size-display-lg: clamp(40px, 6vw, 96px);
+  --ol-font-size-display-md: clamp(28px, 3.4vw, 48px);
+  --ol-font-size-h3: 24px;
+  --ol-font-size-body-lg: 18px;
+  --ol-font-size-body: 16px;
+  --ol-font-size-small: 14px;
+  --ol-font-size-mono-s: 12px;
+  --ol-line-height-display-xxl: 0.82;
+  --ol-line-height-display-xl: 0.86;
+  --ol-line-height-display-lg: 0.9;
+  --ol-line-height-display-md: 0.95;
+  --ol-line-height-h3: 1.2;
+  --ol-line-height-body-lg: 1.55;
+  --ol-line-height-body: 1.6;
+  --ol-line-height-small: 1.5;
+  --ol-line-height-mono-s: 1.4;
+  --ol-letter-spacing-display-xxl: -0.01em;
+  --ol-letter-spacing-display-xl: -0.005em;
+  --ol-letter-spacing-display-lg: 0;
+  --ol-letter-spacing-display-md: 0.005em;
+  --ol-letter-spacing-mono-s: 0.06em;
+  --ol-letter-spacing-mono-caps: 0.08em;
+  --ol-font-weight-regular: 400;
+  --ol-font-weight-medium: 500;
+  --ol-font-weight-semiBold: 600;
+  --ol-font-weight-bold: 700;
+
+  /* Отступы (базовая единица 4px, DESIGN_SYSTEM §4) */
+  --ol-space-0: 4px;
+  --ol-space-1: 8px;
+  --ol-space-2: 12px;
+  --ol-space-3: 16px;
+  --ol-space-4: 24px;
+  --ol-space-5: 32px;
+  --ol-space-6: 48px;
+  --ol-space-7: 64px;
+  --ol-space-8: 96px;
+  --ol-space-9: 128px;
+  --ol-space-10: 192px;
+
+  /* Брейкпоинты (DESIGN_SYSTEM §4) */
+  --ol-breakpoint-xs: 360px;
+  --ol-breakpoint-sm: 480px;
+  --ol-breakpoint-md: 768px;
+  --ol-breakpoint-lg: 1024px;
+  --ol-breakpoint-xl: 1280px;
+  --ol-breakpoint-2xl: 1536px;
+
+  /* Z-индексы (DESIGN_SYSTEM §4) */
+  --ol-z-base: 0;
+  --ol-z-sticky: 10;
+  --ol-z-header: 20;
+  --ol-z-drawer: 30;
+  --ol-z-modal: 40;
+  --ol-z-toast: 50;
+
+  /* Радиусы и границы (DESIGN_SYSTEM §5) */
+  --ol-radius-none: 0px;
+  --ol-radius-sm: 2px;
+  --ol-radius-pill: 9999px;
+  --ol-border-hairline: 1px;
+  --ol-border-accent: 2px;
+
+  /* Токены движения (ANIMATION_GUIDELINES §2) */
+  --ol-motion-durInstant: 100ms;
+  --ol-motion-durFast: 160ms;
+  --ol-motion-durBase: 240ms;
+  --ol-motion-durSlow: 420ms;
+  --ol-motion-durHero: 900ms;
+  --ol-motion-easeOut: cubic-bezier(0.16, 1, 0.3, 1);
+  --ol-motion-easeInOut: cubic-bezier(0.65, 0, 0.35, 1);
+  --ol-motion-easeLinear: linear;
+  --ol-motion-motionScale: 1;
+  --ol-motion-spring-cart: 380 28 1;
+  --ol-motion-spring-drawer: 300 34;
+  --ol-motion-scale: 1;
+}
+
+/* Утилиты на базе токенов */
+.ol-color-ink-900 { color: var(--ol-color-ink-900); }
+.ol-bg-ink-900 { background-color: var(--ol-color-ink-900); }
+.ol-color-paper-100 { color: var(--ol-color-paper-100); }
+.ol-color-ember-600 { color: var(--ol-color-ember-600); }
+.ol-color-ink-950 { color: var(--ol-color-ink-950); }
+

@@ -2,6 +2,7 @@
   "name": "@olenevod/design-tokens",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "description": "Дизайн-токены Olenevod: tokens.json → CSS-переменные + Tailwind preset",
   "main": "tokens.json",
   "scripts": {
