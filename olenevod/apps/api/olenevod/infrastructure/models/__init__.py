@@ -22,6 +22,7 @@ from olenevod.infrastructure.models.inventory import (
     Warehouse,
 )
 from olenevod.infrastructure.models.orders import Order, OrderItem
+from olenevod.infrastructure.models.payments import Payment
 
 __all__ = [
     "Base",
@@ -43,4 +44,5 @@ __all__ = [
     "Warehouse",
     "Order",
     "OrderItem",
+    "Payment",
 ]
