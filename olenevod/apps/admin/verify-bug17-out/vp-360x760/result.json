@@ -1,0 +1,167 @@
+{
+  "viewport": {
+    "name": "vp-360x760",
+    "width": 360,
+    "height": 760
+  },
+  "loadedUrl": "http://localhost:5173/cities",
+  "hScrollBefore": true,
+  "scroll": {
+    "documentScrollWidth": 688,
+    "bodyScrollWidth": 680,
+    "windowInnerWidth": 360
+  },
+  "fonts": "loaded",
+  "touch": {
+    "total": 13,
+    "badCount": 13,
+    "bad": [
+      {
+        "tag": "A",
+        "text": "Города",
+        "w": 204,
+        "h": 32
+      },
+      {
+        "tag": "A",
+        "text": "Склады",
+        "w": 204,
+        "h": 32
+      },
+      {
+        "tag": "A",
+        "text": "Товары",
+        "w": 204,
+        "h": 32
+      },
+      {
+        "tag": "A",
+        "text": "Варианты",
+        "w": 204,
+        "h": 32
+      },
+      {
+        "tag": "A",
+        "text": "Предложения",
+        "w": 204,
+        "h": 32
+      },
+      {
+        "tag": "A",
+        "text": "Остатки",
+        "w": 204,
+        "h": 32
+      },
+      {
+        "tag": "A",
+        "text": "Перемещения",
+        "w": 204,
+        "h": 32
+      },
+      {
+        "tag": "A",
+        "text": "Маршруты",
+        "w": 204,
+        "h": 32
+      },
+      {
+        "tag": "A",
+        "text": "Перевозчики",
+        "w": 204,
+        "h": 32
+      },
+      {
+        "tag": "A",
+        "text": "Заказы",
+        "w": 204,
+        "h": 32
+      },
+      {
+        "tag": "A",
+        "text": "Покупатели",
+        "w": 204,
+        "h": 32
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Выйти",
+        "w": 204,
+        "h": 21
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Добавить",
+        "w": 75,
+        "h": 21
+      }
+    ]
+  },
+  "geom": {
+    "vw": 360,
+    "sidebarW": 220,
+    "sidebarRight": 220,
+    "mainLeft": 228,
+    "mainW": 460,
+    "mainRight": 688
+  },
+  "nav": [
+    {
+      "to": "/cities",
+      "url": "http://localhost:5173/cities",
+      "ok": true
+    },
+    {
+      "to": "/warehouses",
+      "url": "http://localhost:5173/warehouses",
+      "ok": true
+    },
+    {
+      "to": "/products",
+      "url": "http://localhost:5173/products",
+      "ok": true
+    },
+    {
+      "to": "/variants",
+      "url": "http://localhost:5173/variants",
+      "ok": true
+    },
+    {
+      "to": "/offers",
+      "url": "http://localhost:5173/offers",
+      "ok": true
+    },
+    {
+      "to": "/stock",
+      "url": "http://localhost:5173/stock",
+      "ok": true
+    },
+    {
+      "to": "/transfers",
+      "url": "http://localhost:5173/transfers",
+      "ok": true
+    },
+    {
+      "to": "/routes",
+      "url": "http://localhost:5173/routes",
+      "ok": true
+    },
+    {
+      "to": "/carriers",
+      "url": "http://localhost:5173/carriers",
+      "ok": true
+    },
+    {
+      "to": "/orders",
+      "url": "http://localhost:5173/orders",
+      "ok": true
+    },
+    {
+      "to": "/customers",
+      "url": "http://localhost:5173/customers",
+      "ok": true
+    }
+  ],
+  "hScrollAfterDialog": true,
+  "dialog": null,
+  "errors": []
+}
