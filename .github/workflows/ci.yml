@@ -120,7 +120,7 @@ jobs:
         env:
           DATABASE_URL: postgresql+psycopg://olenevod:olenevod_dev@localhost:5432/olenevod_test
           SECRET_KEY: test-secret
-      - run: cd olenevod/apps/bots && pip install -r ../api/requirements.txt && pip install -e ../api && pip install -e . pytest pytest-asyncio
+      - run: cd olenevod/apps/bots && pip install -r ../api/requirements.txt && pip install -e ../api && pip install -e . pytest pytest-asyncio ruff
       - run: cd olenevod/apps/bots && ruff check .
       - run: cd olenevod/apps/bots && python -m pytest -q
         env:
