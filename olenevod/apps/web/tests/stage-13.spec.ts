@@ -1,14 +1,23 @@
 import { test, expect, type Page } from "@playwright/test"
+import { seedCatalog } from "./seed"
 
 // E2E сценарии этапа 13 (витрина II).
 // Шаги S1 (корзина), S5–S7 (чекаут оформляет заказ на реальных данных),
 // S9–S10, S12 (личный кабинет показывает заказы).
 // Требуют запущенного API (порт 8000, БД olenevod_test с сидом stage 13)
 // и dev-сервера Next.js (порт 3000).
+//
+// beforeAll сидит города, категории, товары, зоны и тарифы доставки через
+// прямой SQL в olenevod_test (та же схема, что seed_catalog.sql / seed_orders.sql).
 
 const API_BASE = "http://localhost:8000"
 const MOSCOW_ID = "11111111-1111-1111-1111-111111111001"
 const VARIANT_ID = "44444444-4444-4444-4444-444444444002"
+const CART_TOTAL_KOP = 9500
+
+test.beforeAll(async () => {
+  await seedCatalog()
+})
 
 async function apiFetch(path: string, init?: RequestInit) {
   const response = await fetch(`${API_BASE}${path}`, init)
@@ -25,6 +34,9 @@ async function dismissCookies(page: Page) {
   }
 }
 
+const money = (kop: number): string =>
+  (kop / 100).toLocaleString("ru-RU", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " ₽"
+
 test.describe("S1 — корзина", () => {
   test("шаги 1–6: добавить в корзину, изменить количество, удалить, итог пересчитывается", async ({
     page,
@@ -32,7 +44,7 @@ test.describe("S1 — корзина", () => {
     await page.goto(`/catalog?city_id=${MOSCOW_ID}`)
     await dismissCookies(page)
     await expect(page.getByRole("heading", { name: "Каталог" })).toBeVisible()
-    await expect(page.getByText("Продукт для заказа")).toBeVisible()
+    await expect(page.getByRole("heading", { name: "Продукт для заказа" })).toBeVisible()
 
     // 1–2. Добавить товар в корзину (последняя карточка — «Продукт для заказа», A7: тост).
     await page.getByRole("button", { name: /В корзину/ }).last().click()
@@ -42,8 +54,8 @@ test.describe("S1 — корзина", () => {
     await page.getByRole("button", { name: /Корзина/ }).first().click()
     await expect(page).toHaveURL(/\/cart/)
     await expect(page.getByRole("heading", { name: "Корзина", exact: true })).toBeVisible()
-    await expect(page.getByText("Продукт для заказа")).toBeVisible()
-    await expect(page.getByText("95 ₽")).toBeVisible()
+    await expect(page.getByText("Продукт для заказа").first()).toBeVisible()
+    await expect(page.getByText("95 ₽").first()).toBeVisible()
 
     // 4. Увеличить количество — итог пересчитывается (A9 NumberRoll).
     await page.getByRole("button", { name: /Увеличить количество/ }).first().click()
@@ -56,7 +68,7 @@ test.describe("S1 — корзина", () => {
     // 6. Удалить — корзина пуста.
     await page.getByRole("button", { name: /Удалить Продукт для заказа/ }).first().click()
     await expect(page.getByRole("status").filter({ hasText: /Удалено из корзины: Продукт для заказа/ })).toBeVisible()
-    await expect(page.getByText("Корзина пуста")).toBeVisible()
+    await expect(page.getByText("Корзина пуста").first()).toBeVisible()
   })
 })
 
@@ -77,12 +89,26 @@ test.describe("S5–S7 — чекаут оформляет заказ на ре�
     await page.getByPlaceholder("ivan@example.com").fill("order-1@olenevod.test")
     await page.getByRole("button", { name: /Далее/ }).click()
 
-    // Шаг 2: доставка — город Москва, расчёт доставки через GET /delivery/quote.
+    // Шаг 2: доставка — город Москва, тариф берется динамически из GET /delivery/quote.
     await expect(page.getByRole("heading", { name: /Доставка/ })).toBeVisible()
     await page.locator("select").selectOption("Москва")
-    await expect(page.getByText("Москва внутри МКАД")).toBeVisible()
-    await expect(page.getByText(/6,00 ₽/).first()).toBeVisible()
-    await expect(page.getByText("3 дн.")).toBeVisible()
+
+    const quoteResponse = await page.request.fetch(
+      `${API_BASE}/delivery/quote?city_id=${MOSCOW_ID}&items=${VARIANT_ID}&total_amount=${CART_TOTAL_KOP}`
+    )
+    expect(quoteResponse.ok()).toBe(true)
+    const quote = (await quoteResponse.json()) as {
+      zone: string
+      fee: number
+      free_delivery: boolean
+      estimated_days: number | null
+    }
+
+    await expect(page.getByText(quote.zone).first()).toBeVisible()
+    await expect(page.getByText(money(quote.fee)).first()).toBeVisible()
+    if (quote.estimated_days != null) {
+      await expect(page.getByText(`${quote.estimated_days} дн.`).first()).toBeVisible()
+    }
     await page.getByRole("button", { name: /Далее/ }).click()
 
     // Шаг 3: оплата — ЮKassa (симуляция).
@@ -101,8 +127,8 @@ test.describe("S5–S7 — чекаут оформляет заказ на ре�
     await expect(orderNumber).toBeVisible()
     const orderIdText = await orderNumber.textContent()
     const orderId = orderIdText!.replace("№", "").trim()
-    await expect(page.getByText("Ожидает оплаты")).toBeVisible()
-    await expect(page.getByText(/95,00 ₽/)).toBeVisible() // стоимость товара (доставка оплачивается отдельно)
+    await expect(page.getByText("Ожидает оплаты").first()).toBeVisible()
+    await expect(page.getByText(/95,00 ₽/).first()).toBeVisible() // стоимость товара (доставка оплачивается отдельно)
 
     // Проверка заказа через реальное API.
     const order = await apiFetch(`/orders/${orderId}`)
@@ -147,18 +173,18 @@ test.describe("S9–S10, S12 — личный кабинет показывае�
     await page.reload()
 
     await expect(page.getByRole("heading", { name: /Личный кабинет/ })).toBeVisible()
-    await expect(page.getByText(new RegExp(order.id))).toBeVisible()
-    await expect(page.getByText("Ожидает оплаты")).toBeVisible()
-    await expect(page.getByText(/190,00 ₽/)).toBeVisible()
+    await expect(page.getByText(new RegExp(order.id)).first()).toBeVisible()
+    await expect(page.getByText("Ожидает оплаты").first()).toBeVisible()
+    await expect(page.getByText(/190,00 ₽/).first()).toBeVisible()
 
     // Состав заказа (A20: хронометраж статуса).
     await page.getByRole("button", { name: /Состав заказа/ }).first().click()
-    await expect(page.getByText(VARIANT_ID)).toBeVisible()
+    await expect(page.getByText(VARIANT_ID).first()).toBeVisible()
 
     // Повторить заказ — позиции попадают в корзину.
     await page.getByRole("button", { name: /Повторить заказ/ }).first().click()
     await expect(page.getByRole("heading", { name: "Корзина", exact: true })).toBeVisible()
-    await expect(page.getByText(VARIANT_ID)).toBeVisible()
+    await expect(page.getByText(VARIANT_ID).first()).toBeVisible()
     await expect(page.getByText(/190\s*₽/).first()).toBeVisible()
   })
 

@@ -13,22 +13,24 @@
     "test:e2e:headed": "playwright test --headed"
   },
   "dependencies": {
+    "@olenevod/design-tokens": "file:../../packages/design-tokens",
+    "@olenevod/motion": "file:../../packages/motion",
+    "@olenevod/ui": "file:../../packages/ui",
     "next": "15.0.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "tailwindcss": "^4.0.0",
-    "@olenevod/ui": "file:../../packages/ui",
-    "@olenevod/motion": "file:../../packages/motion",
-    "@olenevod/design-tokens": "file:../../packages/design-tokens"
+    "tailwindcss": "^4.0.0"
   },
   "devDependencies": {
-    "@types/node": "22.x",
-    "@types/react": "19.0.0",
-    "@types/react-dom": "19.0.0",
     "@playwright/test": "^1.52.0",
     "@tailwindcss/postcss": "^4.0.0",
+    "@types/node": "22.x",
+    "@types/pg": "^8.23.1",
+    "@types/react": "19.0.0",
+    "@types/react-dom": "19.0.0",
     "eslint": "9.x",
     "eslint-config-next": "15.0.0",
+    "pg": "^8.23.1",
     "postcss": "^8.4.0",
     "typescript": "5.6.x"
   }

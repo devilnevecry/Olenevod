@@ -1,4 +1,4 @@
-"""ORM-модели каталога: categories, products, product_variants, nutrition, product_media, files, product_certificates."""
+﻿"""ORM-Ð¼Ð¾Ð´ÐµÐ»Ð¸ ÐºÐ°Ñ‚Ð°Ð»Ð¾Ð³Ð°: categories, products, product_variants, nutrition, product_media, files, product_certificates."""
 
 import uuid
 from datetime import datetime
@@ -21,7 +21,7 @@ from olenevod.infrastructure.db import Base, JsonDict
 
 
 class Category(Base):
-    """Категория товаров (иерархия через parent_id, мягкое удаление)."""
+    """ÐšÐ°Ñ‚ÐµÐ³Ð¾Ñ€Ð¸Ñ Ñ‚Ð¾Ð²Ð°Ñ€Ð¾Ð² (Ð¸ÐµÑ€Ð°Ñ€Ñ…Ð¸Ñ Ñ‡ÐµÑ€ÐµÐ· parent_id, Ð¼ÑÐ³ÐºÐ¾Ðµ ÑƒÐ´Ð°Ð»ÐµÐ½Ð¸Ðµ)."""
 
     __tablename__ = "categories"
 
@@ -52,7 +52,7 @@ class Category(Base):
 
 
 class Product(Base):
-    """Товар (привязан к категории, мягкое удаление)."""
+    """Ð¢Ð¾Ð²Ð°Ñ€ (Ð¿Ñ€Ð¸Ð²ÑÐ·Ð°Ð½ Ðº ÐºÐ°Ñ‚ÐµÐ³Ð¾Ñ€Ð¸Ð¸, Ð¼ÑÐ³ÐºÐ¾Ðµ ÑƒÐ´Ð°Ð»ÐµÐ½Ð¸Ðµ)."""
 
     __tablename__ = "products"
 
@@ -104,7 +104,7 @@ class Product(Base):
 
 
 class ProductVariant(Base):
-    """Вариант товара (SKU, единица измерения, атрибуты)."""
+    """Ð’Ð°Ñ€Ð¸Ð°Ð½Ñ‚ Ñ‚Ð¾Ð²Ð°Ñ€Ð° (SKU, ÐµÐ´Ð¸Ð½Ð¸Ñ†Ð° Ð¸Ð·Ð¼ÐµÑ€ÐµÐ½Ð¸Ñ, Ð°Ñ‚Ñ€Ð¸Ð±ÑƒÑ‚Ñ‹)."""
 
     __tablename__ = "product_variants"
 
@@ -119,7 +119,7 @@ class ProductVariant(Base):
     )
     pack_weight_g: Mapped[int | None] = mapped_column(Integer, nullable=True)
     barcode: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
-    attributes: Mapped[JsonDict | None] = mapped_column(postgresql.JSONB(astext_type=Text()), nullable=True)
+    attributes: Mapped[JsonDict | None] = mapped_column(postgresql.JSONB(astext_type=Text()), nullable=True)  # type: ignore[no-untyped-call]
     is_demo: Mapped[bool] = mapped_column(default=False, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
@@ -133,21 +133,21 @@ class ProductVariant(Base):
 
 
 class Nutrition(Base):
-    """КБЖУ на 100 г варианта (публикуется только при verified = true)."""
+    """ÐšÐ‘Ð–Ð£ Ð½Ð° 100 Ð³ Ð²Ð°Ñ€Ð¸Ð°Ð½Ñ‚Ð° (Ð¿ÑƒÐ±Ð»Ð¸ÐºÑƒÐµÑ‚ÑÑ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð¿Ñ€Ð¸ verified = true)."""
 
     __tablename__ = "nutrition"
 
     variant_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("product_variants.id", ondelete="CASCADE"), primary_key=True
     )
-    per_100g: Mapped[JsonDict | None] = mapped_column(postgresql.JSONB(astext_type=Text()), nullable=True)
+    per_100g: Mapped[JsonDict | None] = mapped_column(postgresql.JSONB(astext_type=Text()), nullable=True)  # type: ignore[no-untyped-call]
     verified: Mapped[bool] = mapped_column(default=False, nullable=False)
     verified_by: Mapped[uuid.UUID | None] = mapped_column(nullable=True)
     verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
 class ProductMedia(Base):
-    """Медиа-файл товара (ссылка на files)."""
+    """ÐœÐµÐ´Ð¸Ð°-Ñ„Ð°Ð¹Ð» Ñ‚Ð¾Ð²Ð°Ñ€Ð° (ÑÑÑ‹Ð»ÐºÐ° Ð½Ð° files)."""
 
     __tablename__ = "product_media"
 
@@ -170,7 +170,7 @@ class ProductMedia(Base):
 
 
 class File(Base):
-    """Хранимый файл (медиа, сертификат, прочее)."""
+    """Ð¥Ñ€Ð°Ð½Ð¸Ð¼Ñ‹Ð¹ Ñ„Ð°Ð¹Ð» (Ð¼ÐµÐ´Ð¸Ð°, ÑÐµÑ€Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ‚, Ð¿Ñ€Ð¾Ñ‡ÐµÐµ)."""
 
     __tablename__ = "files"
 
@@ -189,7 +189,7 @@ class File(Base):
 
 
 class ProductCertificate(Base):
-    """Сертификат товара или варианта (ссылка на файл, срок действия)."""
+    """Ð¡ÐµÑ€Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ‚ Ñ‚Ð¾Ð²Ð°Ñ€Ð° Ð¸Ð»Ð¸ Ð²Ð°Ñ€Ð¸Ð°Ð½Ñ‚Ð° (ÑÑÑ‹Ð»ÐºÐ° Ð½Ð° Ñ„Ð°Ð¹Ð», ÑÑ€Ð¾Ðº Ð´ÐµÐ¹ÑÑ‚Ð²Ð¸Ñ)."""
 
     __tablename__ = "product_certificates"
 
@@ -218,3 +218,4 @@ class ProductCertificate(Base):
             name="ck_product_certificates_product_or_variant",
         ),
     )
+

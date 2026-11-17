@@ -46,22 +46,27 @@ export default function ProductPage({
     let cancelled = false
     const load = async () => {
       try {
-        const [{ slug }, { city_id }] = await Promise.all([params, searchParams])
+        const { slug } = await params
+        const { city_id: urlCityId } = await searchParams
         const cities = await catalogApi.listCities()
-        const city = cities.find((c) => c.id === city_id) ?? cities[0]
-        if (!city) {
-          if (!cancelled) setState((s) => ({ ...s, loading: false, error: "Город не найден" }))
-          return
-        }
-        const items = await catalogApi.listProducts({ city_id: city.id, limit: 100, offset: 0 })
-        const found = items.find((item) => item.slug === slug)
-        if (!found) {
-          if (!cancelled) setState((s) => ({ ...s, loading: false, error: "Товар не найден" }))
-          return
-        }
-        const card = await catalogApi.getProduct(found.id, city.id)
+        const city = cities.find((c) => c.id === urlCityId) ?? cities[0]
         if (!cancelled) {
-          setState({ cities, card, city, loading: false, error: null })
+          if (!city) {
+            setState((s) => ({ ...s, loading: false, error: "Город не найден" }))
+          } else {
+            const items = await catalogApi.listProducts({ city_id: city.id, limit: 100, offset: 0 })
+            const found = items.find((item) => item.slug === slug)
+            if (!cancelled) {
+              if (!found) {
+                setState((s) => ({ ...s, loading: false, error: "Товар не найден" }))
+              } else {
+                const card = await catalogApi.getProduct(found.id, city.id)
+                if (!cancelled) {
+                  setState({ cities, card, city, loading: false, error: null })
+                }
+              }
+            }
+          }
         }
       } catch (err) {
         if (!cancelled) {
@@ -73,9 +78,24 @@ export default function ProductPage({
     return () => {
       cancelled = true
     }
-  }, [params, searchParams])
+  }, [])
 
   const { cities, card, city, loading, error } = state
+
+  const onAdd = useCallback(() => {
+    const mv = card?.variants?.[0]
+    if (!mv || !card) return
+    cart.add({
+      product_variant_id: mv.id,
+      name: card.name,
+      price: mv.price_kop / 100,
+      qty: 1,
+    })
+    setAddedId(mv.id)
+    showToast(`Добавлено: ${card.name}`)
+    setTimeout(() => setAddedId(null), 900)
+  }, [cart, showToast, card])
+
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-ink-900 text-paper-300">
@@ -96,18 +116,6 @@ export default function ProductPage({
     (s) => s.city_id === city.id && s.available_qty > 0
   )
   const cityStock = mainVariant.available_by_city.find((s) => s.city_id === city.id)
-
-  const onAdd = useCallback(() => {
-    cart.add({
-      product_variant_id: mainVariant.id,
-      name: card.name,
-      price: mainVariant.price_kop / 100,
-      qty: 1,
-    })
-    setAddedId(mainVariant.id)
-    showToast(`Добавлено: ${card.name}`)
-    setTimeout(() => setAddedId(null), 900)
-  }, [cart, showToast, mainVariant, card])
 
   return (
     <div className="min-h-screen flex flex-col">

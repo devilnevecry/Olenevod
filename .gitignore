@@ -1,4 +1,4 @@
-# Python
+﻿# Python
 .venv/
 venv/
 .env
@@ -20,7 +20,6 @@ node_modules/
 .next/
 dist/
 build/
-*.lock
 
 # IDE / OS
 .idea/
@@ -30,6 +29,14 @@ build/
 .DS_Store
 Thumbs.db
 
-# Локальные сгенерированные файлы (не коммитить)
+# Ð›Ð¾ÐºÐ°Ð»ÑŒÐ½Ñ‹Ðµ ÑÐ³ÐµÐ½ÐµÑ€Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð½Ñ‹Ðµ Ñ„Ð°Ð¹Ð»Ñ‹ (Ð½Ðµ ÐºÐ¾Ð¼Ð¼Ð¸Ñ‚Ð¸Ñ‚ÑŒ)
 .env
 openapi.json
+
+# Generated artifacts and logs
+*.log
+*.txt
+tsconfig.tsbuildinfo
+playwright-report/
+test-results/
+

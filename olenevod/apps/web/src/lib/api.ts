@@ -88,7 +88,7 @@ async function request<T>(
   let lastError: unknown = null
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      const url = new URL(fullPath, typeof window !== "undefined" ? window.location.origin : "http://localhost")
+      const url = new URL(fullPath, typeof window !== "undefined" ? window.location.origin : "http://localhost:3000")
       if (params) {
         for (const [key, value] of Object.entries(params)) {
           const values = Array.isArray(value) ? value : [value]

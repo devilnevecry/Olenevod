@@ -1,8 +1,8 @@
-"""Сервис остатков: резерв, подтверждение, освобождение, возврат, перемещение, истечение, сверка.
+﻿"""Ð¡ÐµÑ€Ð²Ð¸Ñ Ð¾ÑÑ‚Ð°Ñ‚ÐºÐ¾Ð²: Ñ€ÐµÐ·ÐµÑ€Ð², Ð¿Ð¾Ð´Ñ‚Ð²ÐµÑ€Ð¶Ð´ÐµÐ½Ð¸Ðµ, Ð¾ÑÐ²Ð¾Ð±Ð¾Ð¶Ð´ÐµÐ½Ð¸Ðµ, Ð²Ð¾Ð·Ð²Ñ€Ð°Ñ‚, Ð¿ÐµÑ€ÐµÐ¼ÐµÑ‰ÐµÐ½Ð¸Ðµ, Ð¸ÑÑ‚ÐµÑ‡ÐµÐ½Ð¸Ðµ, ÑÐ²ÐµÑ€ÐºÐ°.
 
-Все изменения остатков выполняются через ``InventoryRepository`` (атомарные
-``UPDATE ... WHERE``). Сервис не делает read-modify-write в приложении.
-События изменения остатков пишутся в outbox в той же транзакции.
+Ð’ÑÐµ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ñ Ð¾ÑÑ‚Ð°Ñ‚ÐºÐ¾Ð² Ð²Ñ‹Ð¿Ð¾Ð»Ð½ÑÑŽÑ‚ÑÑ Ñ‡ÐµÑ€ÐµÐ· ``InventoryRepository`` (Ð°Ñ‚Ð¾Ð¼Ð°Ñ€Ð½Ñ‹Ðµ
+``UPDATE ... WHERE``). Ð¡ÐµÑ€Ð²Ð¸Ñ Ð½Ðµ Ð´ÐµÐ»Ð°ÐµÑ‚ read-modify-write Ð² Ð¿Ñ€Ð¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸.
+Ð¡Ð¾Ð±Ñ‹Ñ‚Ð¸Ñ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ñ Ð¾ÑÑ‚Ð°Ñ‚ÐºÐ¾Ð² Ð¿Ð¸ÑˆÑƒÑ‚ÑÑ Ð² outbox Ð² Ñ‚Ð¾Ð¹ Ð¶Ðµ Ñ‚Ñ€Ð°Ð½Ð·Ð°ÐºÑ†Ð¸Ð¸.
 """
 
 import uuid
@@ -24,7 +24,7 @@ from olenevod.infrastructure.repositories import InventoryRepository
 
 
 class InventoryService:
-    """Управление остатками товара по городам/складам."""
+    """Ð£Ð¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸Ðµ Ð¾ÑÑ‚Ð°Ñ‚ÐºÐ°Ð¼Ð¸ Ñ‚Ð¾Ð²Ð°Ñ€Ð° Ð¿Ð¾ Ð³Ð¾Ñ€Ð¾Ð´Ð°Ð¼/ÑÐºÐ»Ð°Ð´Ð°Ð¼."""
 
     RESERVATION_TTL_MINUTES = 30
 
@@ -32,7 +32,7 @@ class InventoryService:
         self._session = session
         self._inventory = InventoryRepository(session)
 
-    # ---------- резерв ----------
+    # ---------- Ñ€ÐµÐ·ÐµÑ€Ð² ----------
 
     async def reserve(
         self,
@@ -42,11 +42,11 @@ class InventoryService:
         idempotency_key: str | None = None,
         ttl_minutes: int | None = None,
     ) -> list[InventoryReservation]:
-        """Зарезервировать остаток под заказ.
+        """Ð—Ð°Ñ€ÐµÐ·ÐµÑ€Ð²Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ Ð¾ÑÑ‚Ð°Ñ‚Ð¾Ðº Ð¿Ð¾Ð´ Ð·Ð°ÐºÐ°Ð·.
 
-        items — список ``{variant_id, city_id, qty}``.
-        ``idempotency_key`` — при повторном вызове с тем же ключом возвращаются
-        уже созданные резервы (проверка выполняется перед выполнением).
+        items â€” ÑÐ¿Ð¸ÑÐ¾Ðº ``{variant_id, city_id, qty}``.
+        ``idempotency_key`` â€” Ð¿Ñ€Ð¸ Ð¿Ð¾Ð²Ñ‚Ð¾Ñ€Ð½Ð¾Ð¼ Ð²Ñ‹Ð·Ð¾Ð²Ðµ Ñ Ñ‚ÐµÐ¼ Ð¶Ðµ ÐºÐ»ÑŽÑ‡Ð¾Ð¼ Ð²Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÑŽÑ‚ÑÑ
+        ÑƒÐ¶Ðµ ÑÐ¾Ð·Ð´Ð°Ð½Ð½Ñ‹Ðµ Ñ€ÐµÐ·ÐµÑ€Ð²Ñ‹ (Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð²Ñ‹Ð¿Ð¾Ð»Ð½ÑÐµÑ‚ÑÑ Ð¿ÐµÑ€ÐµÐ´ Ð²Ñ‹Ð¿Ð¾Ð»Ð½ÐµÐ½Ð¸ÐµÐ¼).
         """
         if idempotency_key is not None:
             existing = await self._find_by_idempotency_key(idempotency_key)
@@ -113,7 +113,7 @@ class InventoryService:
     async def _select_warehouse(
         self, city_id: uuid.UUID, variant_id: uuid.UUID, qty: int
     ) -> uuid.UUID:
-        """Склад города с наибольшим доступным остатком варианта, закрывающий qty."""
+        """Ð¡ÐºÐ»Ð°Ð´ Ð³Ð¾Ñ€Ð¾Ð´Ð° Ñ Ð½Ð°Ð¸Ð±Ð¾Ð»ÑŒÑˆÐ¸Ð¼ Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð½Ñ‹Ð¼ Ð¾ÑÑ‚Ð°Ñ‚ÐºÐ¾Ð¼ Ð²Ð°Ñ€Ð¸Ð°Ð½Ñ‚Ð°, Ð·Ð°ÐºÑ€Ñ‹Ð²Ð°ÑŽÑ‰Ð¸Ð¹ qty."""
         result = await self._session.execute(
             select(Warehouse.id, StockLevel.on_hand, StockLevel.reserved)
             .join(StockLevel, StockLevel.warehouse_id == Warehouse.id)
@@ -138,12 +138,12 @@ class InventoryService:
     def _as_uuid(value: Any) -> uuid.UUID:
         return value if isinstance(value, uuid.UUID) else uuid.UUID(str(value))
 
-    # ---------- подтверждение / освобождение ----------
+    # ---------- Ð¿Ð¾Ð´Ñ‚Ð²ÐµÑ€Ð¶Ð´ÐµÐ½Ð¸Ðµ / Ð¾ÑÐ²Ð¾Ð±Ð¾Ð¶Ð´ÐµÐ½Ð¸Ðµ ----------
 
     async def commit(self, reservation_id: uuid.UUID) -> InventoryReservation | None:
-        """Подтвердить резерв: списать со склада (on_hand -= qty, reserved -= qty).
+        """ÐŸÐ¾Ð´Ñ‚Ð²ÐµÑ€Ð´Ð¸Ñ‚ÑŒ Ñ€ÐµÐ·ÐµÑ€Ð²: ÑÐ¿Ð¸ÑÐ°Ñ‚ÑŒ ÑÐ¾ ÑÐºÐ»Ð°Ð´Ð° (on_hand -= qty, reserved -= qty).
 
-        Возвращает резервацию или None, если не найдена.
+        Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ Ñ€ÐµÐ·ÐµÑ€Ð²Ð°Ñ†Ð¸ÑŽ Ð¸Ð»Ð¸ None, ÐµÑÐ»Ð¸ Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½Ð°.
         """
         reservation = await self._session.get(InventoryReservation, reservation_id)
         if reservation is None:
@@ -174,7 +174,7 @@ class InventoryService:
         return reservation
 
     async def release(self, reservation_id: uuid.UUID) -> InventoryReservation | None:
-        """Освободить резерв (reserved -= qty, статус released)."""
+        """ÐžÑÐ²Ð¾Ð±Ð¾Ð´Ð¸Ñ‚ÑŒ Ñ€ÐµÐ·ÐµÑ€Ð² (reserved -= qty, ÑÑ‚Ð°Ñ‚ÑƒÑ released)."""
         reservation = await self._session.get(InventoryReservation, reservation_id)
         if reservation is None:
             return None
@@ -203,15 +203,15 @@ class InventoryService:
         )
         return reservation
 
-    # ---------- возврат на склад ----------
+    # ---------- Ð²Ð¾Ð·Ð²Ñ€Ð°Ñ‚ Ð½Ð° ÑÐºÐ»Ð°Ð´ ----------
 
     async def return_items(
         self, items: list[dict[str, Any]]
     ) -> list[dict[str, Any]]:
-        """Вернуть товар на склад (on_hand += qty).
+        """Ð’ÐµÑ€Ð½ÑƒÑ‚ÑŒ Ñ‚Ð¾Ð²Ð°Ñ€ Ð½Ð° ÑÐºÐ»Ð°Ð´ (on_hand += qty).
 
-        items — список ``{variant_id, city_id, qty}``. Возвращает обработанные
-        позиции с warehouse_id.
+        items â€” ÑÐ¿Ð¸ÑÐ¾Ðº ``{variant_id, city_id, qty}``. Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ Ð¾Ð±Ñ€Ð°Ð±Ð¾Ñ‚Ð°Ð½Ð½Ñ‹Ðµ
+        Ð¿Ð¾Ð·Ð¸Ñ†Ð¸Ð¸ Ñ warehouse_id.
         """
         processed: list[dict[str, Any]] = []
         for item in items:
@@ -249,15 +249,15 @@ class InventoryService:
             )
         return processed
 
-    # ---------- перемещение между городами ----------
+    # ---------- Ð¿ÐµÑ€ÐµÐ¼ÐµÑ‰ÐµÐ½Ð¸Ðµ Ð¼ÐµÐ¶Ð´Ñƒ Ð³Ð¾Ñ€Ð¾Ð´Ð°Ð¼Ð¸ ----------
 
     async def transfer(
         self, from_city: uuid.UUID, to_city: uuid.UUID, items: list[dict[str, Any]]
     ) -> list[dict[str, Any]]:
-        """Переместить товар между городами.
+        """ÐŸÐµÑ€ÐµÐ¼ÐµÑÑ‚Ð¸Ñ‚ÑŒ Ñ‚Ð¾Ð²Ð°Ñ€ Ð¼ÐµÐ¶Ð´Ñƒ Ð³Ð¾Ñ€Ð¾Ð´Ð°Ð¼Ð¸.
 
-        items — список ``{variant_id, qty}``. Снимает остаток в from_city и
-        пополняет в to_city. Возвращает обработанные позиции.
+        items â€” ÑÐ¿Ð¸ÑÐ¾Ðº ``{variant_id, qty}``. Ð¡Ð½Ð¸Ð¼Ð°ÐµÑ‚ Ð¾ÑÑ‚Ð°Ñ‚Ð¾Ðº Ð² from_city Ð¸
+        Ð¿Ð¾Ð¿Ð¾Ð»Ð½ÑÐµÑ‚ Ð² to_city. Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ Ð¾Ð±Ñ€Ð°Ð±Ð¾Ñ‚Ð°Ð½Ð½Ñ‹Ðµ Ð¿Ð¾Ð·Ð¸Ñ†Ð¸Ð¸.
         """
         processed: list[dict[str, Any]] = []
         for item in items:
@@ -276,12 +276,12 @@ class InventoryService:
             if to_city_obj is None:
                 raise NotFound("city", str(to_city))
 
-            # Снять со склада источника: резерв + подтверждение (on_hand -= qty).
+            # Ð¡Ð½ÑÑ‚ÑŒ ÑÐ¾ ÑÐºÐ»Ð°Ð´Ð° Ð¸ÑÑ‚Ð¾Ñ‡Ð½Ð¸ÐºÐ°: Ñ€ÐµÐ·ÐµÑ€Ð² + Ð¿Ð¾Ð´Ñ‚Ð²ÐµÑ€Ð¶Ð´ÐµÐ½Ð¸Ðµ (on_hand -= qty).
             from_warehouse = await self._select_warehouse(from_city, variant_id, qty)
             await self._inventory.reserve(from_warehouse, variant_id, qty)
             await self._inventory.commit(from_warehouse, variant_id, qty)
 
-            # Пополнить склад назначения (on_hand += qty).
+            # ÐŸÐ¾Ð¿Ð¾Ð»Ð½Ð¸Ñ‚ÑŒ ÑÐºÐ»Ð°Ð´ Ð½Ð°Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ñ (on_hand += qty).
             to_warehouse = await self._select_any_warehouse(to_city, variant_id)
             await self._receive(to_warehouse, variant_id, qty)
 
@@ -323,12 +323,12 @@ class InventoryService:
             )
         return processed
 
-    # ---------- истечение резервов ----------
+    # ---------- Ð¸ÑÑ‚ÐµÑ‡ÐµÐ½Ð¸Ðµ Ñ€ÐµÐ·ÐµÑ€Ð²Ð¾Ð² ----------
 
     async def expire_reservations(self) -> list[InventoryReservation]:
-        """Пометить истёкшие активные резервы как expired и вернуть товар на склад.
+        """ÐŸÐ¾Ð¼ÐµÑ‚Ð¸Ñ‚ÑŒ Ð¸ÑÑ‚Ñ‘ÐºÑˆÐ¸Ðµ Ð°ÐºÑ‚Ð¸Ð²Ð½Ñ‹Ðµ Ñ€ÐµÐ·ÐµÑ€Ð²Ñ‹ ÐºÐ°Ðº expired Ð¸ Ð²ÐµÑ€Ð½ÑƒÑ‚ÑŒ Ñ‚Ð¾Ð²Ð°Ñ€ Ð½Ð° ÑÐºÐ»Ð°Ð´.
 
-        Возвращает список истёкших резервов.
+        Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ ÑÐ¿Ð¸ÑÐ¾Ðº Ð¸ÑÑ‚Ñ‘ÐºÑˆÐ¸Ñ… Ñ€ÐµÐ·ÐµÑ€Ð²Ð¾Ð².
         """
         now = datetime.now(UTC)
         result = await self._session.execute(
@@ -360,12 +360,12 @@ class InventoryService:
             )
         return reservations
 
-    # ---------- сверка ----------
+    # ---------- ÑÐ²ÐµÑ€ÐºÐ° ----------
 
     async def reconcile(self) -> list[dict[str, Any]]:
-        """Сверка фактических резервов (stock_levels.reserved) с суммой активных
-        inventory_reservations по городу+варианту. Возвращает расхождения."""
-        # Резерв, зафиксированный в stock_levels, сгруппированный по городу+варианту.
+        """Ð¡Ð²ÐµÑ€ÐºÐ° Ñ„Ð°ÐºÑ‚Ð¸Ñ‡ÐµÑÐºÐ¸Ñ… Ñ€ÐµÐ·ÐµÑ€Ð²Ð¾Ð² (stock_levels.reserved) Ñ ÑÑƒÐ¼Ð¼Ð¾Ð¹ Ð°ÐºÑ‚Ð¸Ð²Ð½Ñ‹Ñ…
+        inventory_reservations Ð¿Ð¾ Ð³Ð¾Ñ€Ð¾Ð´Ñƒ+Ð²Ð°Ñ€Ð¸Ð°Ð½Ñ‚Ñƒ. Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ Ñ€Ð°ÑÑ…Ð¾Ð¶Ð´ÐµÐ½Ð¸Ñ."""
+        # Ð ÐµÐ·ÐµÑ€Ð², Ð·Ð°Ñ„Ð¸ÐºÑÐ¸Ñ€Ð¾Ð²Ð°Ð½Ð½Ñ‹Ð¹ Ð² stock_levels, ÑÐ³Ñ€ÑƒÐ¿Ð¿Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð½Ñ‹Ð¹ Ð¿Ð¾ Ð³Ð¾Ñ€Ð¾Ð´Ñƒ+Ð²Ð°Ñ€Ð¸Ð°Ð½Ñ‚Ñƒ.
         stock_stmt = (
             select(
                 Warehouse.city_id.label("city_id"),
@@ -382,7 +382,7 @@ class InventoryService:
             for row in stock_rows
         }
 
-        # Сумма активных резервов, сгруппированная по городу+варианту.
+        # Ð¡ÑƒÐ¼Ð¼Ð° Ð°ÐºÑ‚Ð¸Ð²Ð½Ñ‹Ñ… Ñ€ÐµÐ·ÐµÑ€Ð²Ð¾Ð², ÑÐ³Ñ€ÑƒÐ¿Ð¿Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð½Ð°Ñ Ð¿Ð¾ Ð³Ð¾Ñ€Ð¾Ð´Ñƒ+Ð²Ð°Ñ€Ð¸Ð°Ð½Ñ‚Ñƒ.
         res_stmt = (
             select(
                 InventoryReservation.city_id,
@@ -416,12 +416,12 @@ class InventoryService:
                 )
         return discrepancies
 
-    # ---------- вспомогательное ----------
+    # ---------- Ð²ÑÐ¿Ð¾Ð¼Ð¾Ð³Ð°Ñ‚ÐµÐ»ÑŒÐ½Ð¾Ðµ ----------
 
     async def _select_any_warehouse(
         self, city_id: uuid.UUID, variant_id: uuid.UUID
     ) -> uuid.UUID:
-        """Любой активный склад города с остатком варианта (или первый активный склад города)."""
+        """Ð›ÑŽÐ±Ð¾Ð¹ Ð°ÐºÑ‚Ð¸Ð²Ð½Ñ‹Ð¹ ÑÐºÐ»Ð°Ð´ Ð³Ð¾Ñ€Ð¾Ð´Ð° Ñ Ð¾ÑÑ‚Ð°Ñ‚ÐºÐ¾Ð¼ Ð²Ð°Ñ€Ð¸Ð°Ð½Ñ‚Ð° (Ð¸Ð»Ð¸ Ð¿ÐµÑ€Ð²Ñ‹Ð¹ Ð°ÐºÑ‚Ð¸Ð²Ð½Ñ‹Ð¹ ÑÐºÐ»Ð°Ð´ Ð³Ð¾Ñ€Ð¾Ð´Ð°)."""
         result = await self._session.execute(
             select(Warehouse.id)
             .join(StockLevel, StockLevel.warehouse_id == Warehouse.id)
@@ -431,8 +431,8 @@ class InventoryService:
         )
         row = result.first()
         if row is not None:
-            return row[0]
-        # Нет склада с остатком варианта — взять первый активный склад города.
+            return uuid.UUID(str(row[0]))
+        # ÐÐµÑ‚ ÑÐºÐ»Ð°Ð´Ð° Ñ Ð¾ÑÑ‚Ð°Ñ‚ÐºÐ¾Ð¼ Ð²Ð°Ñ€Ð¸Ð°Ð½Ñ‚Ð° â€” Ð²Ð·ÑÑ‚ÑŒ Ð¿ÐµÑ€Ð²Ñ‹Ð¹ Ð°ÐºÑ‚Ð¸Ð²Ð½Ñ‹Ð¹ ÑÐºÐ»Ð°Ð´ Ð³Ð¾Ñ€Ð¾Ð´Ð°.
         result = await self._session.execute(
             select(Warehouse.id)
             .where(Warehouse.city_id == city_id, Warehouse.is_active.is_(True))
@@ -442,10 +442,10 @@ class InventoryService:
         row = result.first()
         if row is None:
             raise NotFound("warehouse", f"city={city_id}")
-        return row[0]
+        return uuid.UUID(str(row[0]))
 
     async def _receive(self, warehouse_id: uuid.UUID, variant_id: uuid.UUID, qty: int) -> None:
-        """Пополнить остаток на складе (on_hand += qty)."""
+        """ÐŸÐ¾Ð¿Ð¾Ð»Ð½Ð¸Ñ‚ÑŒ Ð¾ÑÑ‚Ð°Ñ‚Ð¾Ðº Ð½Ð° ÑÐºÐ»Ð°Ð´Ðµ (on_hand += qty)."""
         result = await self._session.execute(
             select(StockLevel).where(
                 StockLevel.warehouse_id == warehouse_id,
@@ -481,3 +481,4 @@ class InventoryService:
                 payload=payload,
             )
         )
+
