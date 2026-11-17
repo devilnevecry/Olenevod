@@ -16,11 +16,13 @@
     "react-router-dom": "6.28.x"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "@types/react": "19.0.0",
     "@types/react-dom": "19.0.0",
     "@types/react-router-dom": "5.3.x",
     "@vitejs/plugin-react": "4.3.x",
     "eslint": "9.x",
+    "playwright": "^1.65.1",
     "typescript": "5.6.x",
     "vite": "6.0.x"
   }
