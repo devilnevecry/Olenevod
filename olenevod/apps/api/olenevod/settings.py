@@ -13,10 +13,10 @@ class Settings(BaseSettings):
 
     app_mode: str = "demo"
 
-    database_url: str = "postgresql+asyncpg://olenevod:olenevod_dev@localhost:5432/olenevod"
+    database_url: str = "postgresql+asyncpg://olenevod:olenevod_dev@localhost:5432/olenevod_test"
     redis_url: str = "redis://localhost:6379/0"
 
-    secret_key: str = "dev-secret-change-me-in-production"
+    secret_key: str
 
     bot_token_telegram: str | None = None
     bot_token_vk: str | None = None
