@@ -119,7 +119,7 @@ class ProductVariant(Base):
     )
     pack_weight_g: Mapped[int | None] = mapped_column(Integer, nullable=True)
     barcode: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
-    attributes: Mapped[JsonDict | None] = mapped_column(postgresql.JSONB(astext_type=Text()), nullable=True)  # type: ignore[no-untyped-call]
+    attributes: Mapped[JsonDict | None] = mapped_column(postgresql.JSONB(astext_type=Text()), nullable=True)  # type: ignore[no-untyped-call,unused-ignore]
     is_demo: Mapped[bool] = mapped_column(default=False, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
@@ -140,7 +140,7 @@ class Nutrition(Base):
     variant_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("product_variants.id", ondelete="CASCADE"), primary_key=True
     )
-    per_100g: Mapped[JsonDict | None] = mapped_column(postgresql.JSONB(astext_type=Text()), nullable=True)  # type: ignore[no-untyped-call]
+    per_100g: Mapped[JsonDict | None] = mapped_column(postgresql.JSONB(astext_type=Text()), nullable=True)  # type: ignore[no-untyped-call,unused-ignore]
     verified: Mapped[bool] = mapped_column(default=False, nullable=False)
     verified_by: Mapped[uuid.UUID | None] = mapped_column(nullable=True)
     verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
