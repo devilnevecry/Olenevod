@@ -55,6 +55,7 @@ class OrderRepository:
         customer_phone: str,
         total_amount: int,
         idempotency_key: str | None = None,
+        user_id: uuid.UUID | None = None,
     ) -> Order:
         """Создать заказ в статусе pending_payment и flushed (id доступен)."""
         order = Order(
@@ -64,6 +65,7 @@ class OrderRepository:
             status="pending_payment",
             total_amount=total_amount,
             idempotency_key=idempotency_key,
+            user_id=user_id,
         )
         self._session.add(order)
         await self._session.flush()
@@ -113,12 +115,14 @@ class OrderService:
         customer_phone: str,
         items: list[dict[str, Any]],
         idempotency_key: str | None = None,
+        user_id: uuid.UUID | None = None,
     ) -> tuple[Order, list[OrderItem]]:
         """Оформить заказ: резерв стока + создание заказа и позиций атомарно.
 
         items — список {product_variant_id, qty}.
         idempotency_key — при повторном запросе с тем же ключом возвращается
         существующий заказ без повторного резерва стока.
+        user_id — владелец заказа из JWT (None в демо-режиме без токена).
         """
         if not items:
             raise ValueError("order must contain at least one item")
@@ -151,7 +155,7 @@ class OrderService:
             await self._inventory.reserve(warehouse_id, variant_id, qty)
 
         order = await self._orders.create_order(
-            city_id, customer_name, customer_phone, total_kop, idempotency_key
+            city_id, customer_name, customer_phone, total_kop, idempotency_key, user_id
         )
         created_items: list[OrderItem] = []
         for item in items:

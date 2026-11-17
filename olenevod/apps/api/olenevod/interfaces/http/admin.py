@@ -262,6 +262,7 @@ class OrderStatusIn(BaseModel):
 
 class OrderOut(BaseModel):
     id: uuid.UUID
+    user_id: uuid.UUID | None = None
     city_id: uuid.UUID
     customer_name: str
     customer_phone: str
