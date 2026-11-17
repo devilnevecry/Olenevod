@@ -115,21 +115,22 @@ export function CrudPage({
   const formFields = fields.map((f) => {
     const value = form[f.key];
     let input: React.ReactNode;
-    if (f.type === "boolean") {
-      input = (
-        <select
-          value={String(value ?? false)}
-          onChange={(e) => setForm({ ...form, [f.key]: e.target.value === "true" })}
-          style={{ width: "100%", padding: "6px 10px", fontSize: 14, border: "1px solid #cbd5e1", borderRadius: 6 }}
-        >
-          <option value="true">Да</option>
-          <option value="false">Нет</option>
-        </select>
-      );
+if (f.type === "boolean") {
+    input = (
+      <select
+        name={f.key}
+        value={String(value ?? "")}
+        onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
+      >
+        <option value="true">Да</option>
+        <option value="false">Нет</option>
+      </select>
+    );
     } else if (f.type === "select" && f.options) {
       input = (
         <Select
           key={f.key}
+          name={f.key}
           label={f.label}
           value={String(value ?? "")}
           onChange={(v) => setForm({ ...form, [f.key]: v })}
@@ -140,6 +141,7 @@ export function CrudPage({
       input = (
         <Input
           key={f.key}
+          name={f.key}
           label={f.label}
           value={String(value ?? "")}
           onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
