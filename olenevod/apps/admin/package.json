@@ -12,11 +12,13 @@
   },
   "dependencies": {
     "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react-dom": "19.0.0",
+    "react-router-dom": "6.28.x"
   },
   "devDependencies": {
     "@types/react": "19.0.0",
     "@types/react-dom": "19.0.0",
+    "@types/react-router-dom": "5.3.x",
     "@vitejs/plugin-react": "4.3.x",
     "eslint": "9.x",
     "typescript": "5.6.x",
