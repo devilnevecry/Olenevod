@@ -1,0 +1,134 @@
+{
+  "scenarios": [
+    {
+      "name": "S1 création commande (API POST /orders)",
+      "status": "PASS",
+      "detail": "id=e955e989-dd66-44e5-ab35-fcadce50f1c3 status=pending_payment total=9500 user_id=null"
+    },
+    {
+      "name": "S1 bis idempotence (même clé → même commande)",
+      "status": "PASS",
+      "detail": "id=e955e989-dd66-44e5-ab35-fcadce50f1c3"
+    },
+    {
+      "name": "S8 hors stock (qty 100 > dispo 8) → 409",
+      "status": "PASS",
+      "detail": "HTTP 409 {\"detail\":\"insufficient stock for variant 44444444-4444-4444-4444-444444444002\"}"
+    },
+    {
+      "name": "S9.a 401 admin sans token",
+      "status": "PASS",
+      "detail": "GET /admin/orders → 401"
+    },
+    {
+      "name": "S6 devis livraison Moscou (pas de zones)",
+      "status": "INFO",
+      "detail": "GET /delivery/quote → 404 {\"detail\":\"delivery_zone not found: 11111111-1111-1111-1111-111111111001\"} (aucune zone livraison en base)"
+    },
+    {
+      "name": "S7 multi-ville: Moscou produit dispo / Test City vide",
+      "status": "PASS",
+      "detail": "Moscou 1 produit(s), Test City 0"
+    },
+    {
+      "name": "S2 connexion admin via formulaire (réel /auth/login)",
+      "status": "PASS",
+      "detail": "redirection vers /cities après login, token récupéré"
+    },
+    {
+      "name": "S2 commande présente dans la liste admin",
+      "status": "PASS",
+      "detail": "id=e955e989-dd66-44e5-ab35-fcadce50f1c3"
+    },
+    {
+      "name": "S3 changement statut pending_payment → new (admin UI + API)",
+      "status": "PASS",
+      "detail": "status=new"
+    },
+    {
+      "name": "S3 bis statut new→paid",
+      "status": "FAIL",
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "S4 affichage des restes de stock (admin /stock)",
+      "status": "PASS",
+      "detail": "page /stock chargée"
+    },
+    {
+      "name": "S5 page des transferts (/transfers)",
+      "status": "PASS",
+      "detail": "page chargée"
+    },
+    {
+      "name": "viewport mobile 390x844 login",
+      "status": "PASS",
+      "detail": "page chargée sans erreur critique"
+    }
+  ],
+  "defects": [
+    {
+      "name": "S3 bis statut new→paid",
+      "steps": "PATCH status=paid",
+      "expected": "status=paid",
+      "actual": "HTTP 200 {\"id\":\"e955e989-dd66-44e5-ab35-fcadce50f1c3\",\"user_id\":null,\"city_id\":\"11111111-1111-1111-1111-111111111001\",\"customer_name\":\"Браузер Покупатель\",\"customer_phone\":\"+79001234567\",\"status\":\"new\",\"total_amount\":9500}",
+      "evidence": null
+    }
+  ],
+  "consoleErrors": [
+    {
+      "type": "warning",
+      "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.",
+      "url": "http://localhost:5173/login"
+    },
+    {
+      "type": "warning",
+      "text": "⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.",
+      "url": "http://localhost:5173/login"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://localhost:5173/login"
+    },
+    {
+      "type": "error",
+      "text": "Each child in a list should have a unique \"key\" prop.%s%s See https://react.dev/link/warning-keys for more information. \n\nCheck the render method of `CrudPage`. ",
+      "url": "http://localhost:5173/cities"
+    },
+    {
+      "type": "error",
+      "text": "Access to fetch at 'http://localhost:8000/admin/orders/e955e989-dd66-44e5-ab35-fcadce50f1c3/status' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+      "url": "http://localhost:5173/orders"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_FAILED",
+      "url": "http://localhost:5173/orders"
+    },
+    {
+      "type": "warning",
+      "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.",
+      "url": "http://localhost:5173/login"
+    },
+    {
+      "type": "warning",
+      "text": "⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.",
+      "url": "http://localhost:5173/login"
+    }
+  ],
+  "networkFailures": [
+    {
+      "url": "http://localhost:8000/admin/orders/e955e989-dd66-44e5-ab35-fcadce50f1c3/status"
+    }
+  ],
+  "screenshots": [
+    "C:\\Users\\nu11\\Documents\\GitHub\\kilo-hub\\data\\worktrees\\mwkfedqhnoov\\1.T48\\tasks\\qa\\01-after-login.png",
+    "C:\\Users\\nu11\\Documents\\GitHub\\kilo-hub\\data\\worktrees\\mwkfedqhnoov\\1.T48\\tasks\\qa\\03-orders-list.png",
+    "C:\\Users\\nu11\\Documents\\GitHub\\kilo-hub\\data\\worktrees\\mwkfedqhnoov\\1.T48\\tasks\\qa\\04-order-card.png",
+    "C:\\Users\\nu11\\Documents\\GitHub\\kilo-hub\\data\\worktrees\\mwkfedqhnoov\\1.T48\\tasks\\qa\\05-after-status-save.png",
+    "C:\\Users\\nu11\\Documents\\GitHub\\kilo-hub\\data\\worktrees\\mwkfedqhnoov\\1.T48\\tasks\\qa\\06-stock.png",
+    "C:\\Users\\nu11\\Documents\\GitHub\\kilo-hub\\data\\worktrees\\mwkfedqhnoov\\1.T48\\tasks\\qa\\07-transfers.png",
+    "C:\\Users\\nu11\\Documents\\GitHub\\kilo-hub\\data\\worktrees\\mwkfedqhnoov\\1.T48\\tasks\\qa\\08-mobile-login.png"
+  ]
+}

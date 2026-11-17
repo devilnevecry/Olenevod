@@ -1,0 +1,1 @@
+{"city_id":"11111111-1111-1111-1111-111111111001","customer_name":"Тестовый Покупатель","customer_phone":"+79001234567","items":[{"product_variant_id":"44444444-4444-4444-4444-444444444002","qty":1}],"idempotency_key":"t48-order-demo-001"}
