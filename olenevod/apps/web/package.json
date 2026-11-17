@@ -16,7 +16,7 @@
     "@olenevod/design-tokens": "file:../../packages/design-tokens",
     "@olenevod/motion": "file:../../packages/motion",
     "@olenevod/ui": "file:../../packages/ui",
-    "next": "15.0.0",
+    "next": "^15.1.8",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "tailwindcss": "^4.0.0"

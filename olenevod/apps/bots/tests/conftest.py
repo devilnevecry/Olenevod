@@ -29,7 +29,7 @@ for _path in (str(ROOT / "apps" / "api"), str(ROOT / "apps" / "bots")):
     if _path not in sys.path:
         sys.path.insert(0, _path)
 
-TEST_DATABASE_URL = "postgresql+asyncpg://postgres:postgres@localhost:5432/olenevod_test"
+TEST_DATABASE_URL = "postgresql+asyncpg://olenevod:olenevod_dev@localhost:5432/olenevod_test"
 
 CITY_ID = "11111111-1111-1111-1111-111111111010"
 CITY_SLUG = "bots-gorod"
