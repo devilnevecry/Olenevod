@@ -1,11 +1,18 @@
-# tasks/todo.md — Этап 1: каркас монорепо
+# Todo — Этап 49: обновление финальной документации (Olenevod)
 
-- [x] Структура папок монорепо (olenevod/apps/{api,web,admin}, packages/{design-tokens,ui,motion,api-client}, brand/, seeds/, infra/, e2e/)
-- [x] .env.example с переменными окружения (без реальных значений)
-- [x] Docker Compose профили dev/test/prod в olenevod/infra/
-- [x] Makefile с целями up/down/migrate/seed/test/test-e2e/lint/typecheck/audit/release-check/backup-verify/perf
-- [x] Линтеры/форматтеры: ruff, mypy strict (domain/application), eslint, tsc strict, pre-commit
-- [x] Эндпоинты healthz (liveness) и readyz (БД, Redis, миграции) в FastAPI
-- [x] CI-скрипт локально (.github/workflows/ci.yml)
-- [ ] make up — не 실행 в этой среде: демон Docker недоступен (com.docker.service не стартует, WSL-дистрибутив docker-desktop останавливается)
-- [ ] make test — не 실행 через Docker (то же ограничение); pytest пройден локально (2 теста: healthz 200, readyz отвечает)
+- [x] T1: tasks/plan.md + tasks/todo.md (план этапа 49)
+### Checkpoint after T1: план утверждён, можно писать документы
+- [!] T2: docs/BUGS.md (регистр багов этапов 42–48) — ЗАБЛОКИРОВАНО: запись в docs/ запрещена средой (permission "edit" denied)
+- [!] T3: docs/TEST_SCENARIOS.md (список сценариев и статусы) — ЗАБЛОКИРОВАНО
+- [!] T4: docs/TEST_COVERAGE.md (покрытие тестами) — ЗАБЛОКИРОВАНО
+- [!] T5: docs/REMAINING_WORK.md (остаточные работы) — ЗАБЛОКИРОВАНО
+- [!] T6: docs/RELEASE_READINESS.md (готовность к релизу) — ЗАБЛОКИРОВАНО
+- [!] T7: docs/ITERATION_LOG.md (логи итераций этапов 42–48) — ЗАБЛОКИРОВАНО
+### Checkpoint after T2–T7: все 6 документов docs/ написаны — не достигнуто (блокер среды)
+- [!] T8: Olenevod.md (карточка проекта в корне) — ЗАБЛОКИРОВАНО
+- [!] T9: INDEX.md (корневой указатель) — ЗАБЛОКИРОВАНО
+### Checkpoint after T8–T9: корневые документы готовы — не достигнуто (блокер среды)
+- [!] T10: сверка всех 8 документов (финальная проверка) — ЗАБЛОКИРОВАНО
+### Checkpoint after T10: критерий готовности этапа 49 выполнен — не достигнуто (блокер среды)
+
+Примечание: полное содержимое всех восьми документов подготовлено и приведено в最終 ответе (результат задачи), чтобы его можно было перенести в репозиторий после устранения ограничения записи.
