@@ -19,7 +19,7 @@ telegram = ["aiogram>=3.4,<4"]
 vk = ["vk-api>=11.9,<12"]
 
 [tool.setuptools]
-py_modules = ["base", "max_adapter", "max_main", "telegram_adapter", "telegram_main", "vk_adapter", "vk_main"]
+py-modules = ["base", "max_adapter", "max_main", "telegram_adapter", "telegram_main", "vk_adapter", "vk_main"]
 
 [tool.ruff]
 line-length = 100
