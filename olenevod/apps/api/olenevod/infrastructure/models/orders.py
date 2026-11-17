@@ -25,7 +25,7 @@ class Order(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID | None] = mapped_column(
-        ForeignKey("users.id", ondelete="RESTRICT"), nullable=True, index=True
+        nullable=True, index=True
     )
     city_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("cities.id", ondelete="RESTRICT"), nullable=False, index=True
