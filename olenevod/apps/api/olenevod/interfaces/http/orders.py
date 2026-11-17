@@ -36,6 +36,7 @@ class OrderIn(BaseModel):
     customer_name: str
     customer_phone: str
     items: list[OrderItemIn]
+    idempotency_key: str | None = None
 
 
 class OrderItemOut(BaseModel):
@@ -52,6 +53,7 @@ class OrderOut(BaseModel):
     customer_phone: str
     status: str
     total_amount: int
+    idempotency_key: str | None = None
     items: list[OrderItemOut] = []
 
 
@@ -77,6 +79,7 @@ async def create_order(
                 {"product_variant_id": item.product_variant_id, "qty": item.qty}
                 for item in data.items
             ],
+            idempotency_key=data.idempotency_key,
         )
     except NotFound as exc:
         raise HTTPException(status_code=404, detail=exc.message) from exc
@@ -94,6 +97,7 @@ async def create_order(
         customer_phone=order.customer_phone,
         status=order.status,
         total_amount=order.total_amount,
+        idempotency_key=order.idempotency_key,
         items=[
             OrderItemOut(
                 id=item.id,

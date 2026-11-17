@@ -34,6 +34,13 @@ class OrderRepository:
         """Заказ по идентификатору или None."""
         return await self._session.get(Order, order_id)
 
+    async def get_by_idempotency_key(self, key: str) -> Order | None:
+        """Заказ по ключу идемпотентности или None."""
+        result = await self._session.execute(
+            select(Order).where(Order.idempotency_key == key)
+        )
+        return result.scalar_one_or_none()
+
     async def list_items(self, order_id: uuid.UUID) -> Sequence[OrderItem]:
         """Позиции заказа."""
         result = await self._session.execute(
@@ -47,6 +54,7 @@ class OrderRepository:
         customer_name: str,
         customer_phone: str,
         total_amount: int,
+        idempotency_key: str | None = None,
     ) -> Order:
         """Создать заказ в статусе pending_payment и flushed (id доступен)."""
         order = Order(
@@ -55,6 +63,7 @@ class OrderRepository:
             customer_phone=customer_phone,
             status="pending_payment",
             total_amount=total_amount,
+            idempotency_key=idempotency_key,
         )
         self._session.add(order)
         await self._session.flush()
@@ -103,13 +112,23 @@ class OrderService:
         customer_name: str,
         customer_phone: str,
         items: list[dict[str, Any]],
+        idempotency_key: str | None = None,
     ) -> tuple[Order, list[OrderItem]]:
         """Оформить заказ: резерв стока + создание заказа и позиций атомарно.
 
         items — список {product_variant_id, qty}.
+        idempotency_key — при повторном запросе с тем же ключом возвращается
+        существующий заказ без повторного резерва стока.
         """
         if not items:
             raise ValueError("order must contain at least one item")
+
+        # Идемпотентность: если заказ с таким ключом уже существует, вернуть его.
+        if idempotency_key is not None:
+            existing = await self._orders.get_by_idempotency_key(idempotency_key)
+            if existing is not None:
+                existing_items = await self._orders.list_items(existing.id)
+                return existing, list(existing_items)
 
         pricing_items = [
             {"variant_id": item["product_variant_id"], "qty": item["qty"]} for item in items
@@ -132,7 +151,7 @@ class OrderService:
             await self._inventory.reserve(warehouse_id, variant_id, qty)
 
         order = await self._orders.create_order(
-            city_id, customer_name, customer_phone, total_kop
+            city_id, customer_name, customer_phone, total_kop, idempotency_key
         )
         created_items: list[OrderItem] = []
         for item in items:
